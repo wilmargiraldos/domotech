@@ -326,10 +326,14 @@ DataTable > .datatable--hover {
 #status-text {
     color: #00ff88;
     width: 1fr;
+    min-width: 0;
+    content-align: left middle;
 }
 
 #clock {
     color: #666688;
+    width: 8;
+    content-align: right middle;
 }
 
 #status-bar Static {

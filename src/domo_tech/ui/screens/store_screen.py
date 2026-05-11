@@ -83,7 +83,7 @@ class StoreScreen(Screen[None]):
                     yield Button("✕  VACIAR  [X]", id="btn-clear")
 
         with Horizontal(id="status-bar"):
-            yield Static(self.status_msg, id="status-text", markup=False)
+            yield Static(self.status_msg, id="status-text", expand=True, markup=False)
             yield Static("", id="clock", markup=False)
 
     def on_mount(self) -> None:
