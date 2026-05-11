@@ -95,11 +95,13 @@ Input:focus {
     color: #ff00ff;
     text-style: bold;
     width: 1fr;
+    min-width: 0;
     content-align: left middle;
 }
 
 #user-badge {
     color: #00ffff;
+    width: auto;
     content-align: right middle;
     padding-right: 2;
 }

@@ -55,7 +55,7 @@ class SuccessModal(ModalScreen):
         with Container(id="success-box"):
             yield Static("▓▓▓  TRANSACCIÓN EXITOSA  ▓▓▓", id="success-icon")
             yield Static(
-                "Tu orden ha sido procesada y encriptada\nen la blockchain de NexusPay.",
+                "Tu orden ha sido procesada y encriptada\nen la blockchain de SoftEdge Labs PAY.",
                 id="success-msg",
             )
             yield Static(f"ORDEN # {order_id}", id="success-order")

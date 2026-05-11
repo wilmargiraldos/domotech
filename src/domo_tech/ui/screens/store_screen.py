@@ -56,8 +56,13 @@ class StoreScreen(Screen[None]):
         current_user = str(getattr(app, "current_user", ""))
 
         with Horizontal(id="store-header"):
-            yield Static("⬡  DOMO-TECH - TIENDA ONLINE  ⬡", id="store-title")
-            yield Static(f"[ {current_user.upper()}@SOFTEDGE-LABS ]", id="user-badge")
+            yield Static(
+                "⬡  DOMO-TECH - TIENDA ONLINE  ⬡",
+                id="store-title",
+                expand=True,
+                markup=False,
+            )
+            yield Static(f"[ {current_user.upper()}@SOFTEDGE-LABS ]", id="user-badge", markup=False)
 
         with Horizontal(id="main-area"):
             with Vertical(id="products-panel"):
