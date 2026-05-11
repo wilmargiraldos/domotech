@@ -15,6 +15,8 @@ from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import Button, DataTable, Input, Static
 
+from domo_tech.ui.screens.login import LoginScreen
+
 class Product(TypedDict):
     id: int
     name: str
@@ -42,7 +44,7 @@ class StoreScreen(Screen[None]):
         Binding("x", "clear_cart", "Vaciar carrito"),
     ]
 
-    cart = reactive({})
+    cart: reactive[dict[int, CartEntry]] = reactive({})
     status_msg: reactive[str] = reactive(
         "SISTEMA LISTO // NAVEGA CON ↑↓ // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
     )
@@ -50,6 +52,7 @@ class StoreScreen(Screen[None]):
     def __init__(self, products: list[Product] | None = None, **kwargs: Any):
         super().__init__(**kwargs)
         self._products: list[Product] = list(products or [])
+        self.cart = {}
 
     def compose(self) -> ComposeResult:
         app = cast(Any, self.app)
@@ -186,8 +189,13 @@ class StoreScreen(Screen[None]):
         self.status_msg = "CARRITO VACIADO"
 
     def action_logout(self) -> None:
+        self.cart = {}
+        self._refresh_cart_ui()
         app = cast(Any, self.app)
         app.current_user = ""
+        login_screen = app.screen_stack[-2] if len(app.screen_stack) >= 2 else None
+        if isinstance(login_screen, LoginScreen):
+            login_screen.clear_form()
         app.pop_screen()
 
     def action_checkout(self) -> None:

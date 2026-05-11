@@ -66,6 +66,11 @@ class LoginScreen(Screen):
     def action_submit(self) -> None:
         self._try_login()
 
+    def clear_form(self) -> None:
+        self.query_one("#input-user", Input).value = ""
+        self.query_one("#input-pass", Input).value = ""
+        self.query_one("#login-error", Static).update("")
+
     def _try_login(self) -> None:
         user = self.query_one("#input-user", Input).value.strip()
         pwd = self.query_one("#input-pass", Input).value.strip()
