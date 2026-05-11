@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Callable
 
 from textual.app import ComposeResult
-from textual.containers import Container, Horizontal
+from textual.containers import Container, Horizontal, ScrollableContainer
 from textual.screen import ModalScreen
 from textual.widgets import Button, Static
 
@@ -42,6 +42,45 @@ class CheckoutModal(ModalScreen):
             self.dismiss()
             self._callback()
         elif event.button.id == "btn-cancel":
+            self.dismiss()
+
+
+class ProductDetailModal(ModalScreen):
+    """Modal de vista previa técnica del producto seleccionado."""
+
+    def __init__(self, product: dict, **kwargs):
+        super().__init__(**kwargs)
+        self._product = product
+
+    def compose(self) -> ComposeResult:
+        product = self._product
+        stock = int(product["stock"])
+        stock_text = "AGOTADO" if stock <= 0 else f"{stock} unidades"
+        features = product.get("features") or ["Sin características registradas."]
+        specs = product.get("specs") or {}
+
+        with Container(id="product-detail-box"):
+            yield Static("◈  VISTA PREVIA DE PRODUCTO  ◈", id="product-detail-title")
+            yield Static(str(product["name"]), id="product-detail-name", markup=False)
+            with Horizontal(id="product-detail-meta"):
+                yield Static(f"CATEGORÍA: {product['cat']}", classes="pd-meta", markup=False)
+                yield Static(f"PRECIO: ${product['price']:,.2f}", classes="pd-meta", markup=False)
+                yield Static(f"STOCK: {stock_text}", classes="pd-meta", markup=False)
+            with ScrollableContainer(id="product-detail-body"):
+                yield Static(str(product.get("description") or "Sin descripción técnica registrada."), id="pd-desc")
+                yield Static("CARACTERÍSTICAS", classes="pd-section")
+                for feature in features:
+                    yield Static(f"• {feature}", classes="pd-line", markup=False)
+                yield Static("ESPECIFICACIONES", classes="pd-section")
+                if specs:
+                    for label, value in specs.items():
+                        yield Static(f"{label}: {value}", classes="pd-line", markup=False)
+                else:
+                    yield Static("Sin especificaciones registradas.", classes="pd-line")
+            yield Button("⟫  CERRAR  ⟪", id="btn-detail-close")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "btn-detail-close":
             self.dismiss()
 
 

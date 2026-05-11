@@ -425,6 +425,86 @@ CheckoutModal {
 
 #btn-cancel:hover { background: #ff3333 30%; }
 
+/* ════════════ PRODUCT DETAIL MODAL ════════════ */
+ProductDetailModal {
+    align: center middle;
+    background: #000008 80%;
+}
+
+#product-detail-box {
+    width: 76;
+    height: 28;
+    border: heavy #ff00ff;
+    background: #0a0a1f;
+    padding: 1 2;
+}
+
+#product-detail-title {
+    color: #ff00ff;
+    text-style: bold;
+    text-align: center;
+    height: 1;
+    margin-bottom: 1;
+}
+
+#product-detail-name {
+    color: #00ffff;
+    text-style: bold;
+    height: 2;
+    content-align: center middle;
+}
+
+#product-detail-meta {
+    height: 3;
+    border-top: solid #1a1a3a;
+    border-bottom: solid #1a1a3a;
+    align: center middle;
+}
+
+.pd-meta {
+    color: #00ff88;
+    width: 1fr;
+    content-align: center middle;
+}
+
+#product-detail-body {
+    height: 1fr;
+    min-height: 0;
+    padding: 1 1;
+    overflow-y: auto;
+}
+
+#pd-desc {
+    color: #cccccc;
+    margin-bottom: 1;
+}
+
+.pd-section {
+    color: #ff00ff;
+    text-style: bold;
+    margin-top: 1;
+    margin-bottom: 1;
+}
+
+.pd-line {
+    color: #aaaacc;
+    margin-bottom: 1;
+}
+
+#btn-detail-close {
+    background: #ff00ff 15%;
+    color: #ff00ff;
+    border: tall #ff00ff;
+    width: 100%;
+    height: 3;
+    text-style: bold;
+}
+
+#btn-detail-close:hover {
+    background: #ff00ff 35%;
+    color: #ffffff;
+}
+
 /* ════════════ SUCCESS MODAL ════════════ */
 SuccessModal {
     align: center middle;

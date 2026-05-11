@@ -23,6 +23,9 @@ class Product(TypedDict):
     price: float
     cat: str
     stock: int
+    description: str
+    features: list[str]
+    specs: dict[str, str]
 
 
 class CartEntry(TypedDict):
@@ -39,7 +42,7 @@ class InventoryProvider(Protocol):
 
 
 from domo_tech.ui.screens.cart_item import CartItem
-from domo_tech.ui.screens.modals import CheckoutModal, SuccessModal
+from domo_tech.ui.screens.modals import CheckoutModal, ProductDetailModal, SuccessModal
 
 
 class StoreScreen(Screen[None]):
@@ -50,11 +53,12 @@ class StoreScreen(Screen[None]):
         Binding("q", "logout", "Salir"),
         Binding("c", "checkout", "Checkout"),
         Binding("x", "clear_cart", "Vaciar carrito"),
+        Binding("v", "view_product", "Vista"),
     ]
 
     cart: reactive[dict[int, CartEntry]] = reactive({})
     status_msg: reactive[str] = reactive(
-        "SISTEMA LISTO // NAVEGA CON ↑↓ // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
+        "SISTEMA LISTO // NAVEGA CON ↑↓ // [V] DETALLE // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
     )
 
     def __init__(
@@ -212,6 +216,14 @@ class StoreScreen(Screen[None]):
         self.cart = {}
         self._refresh_cart_ui()
         self.status_msg = "CARRITO VACIADO"
+
+    def action_view_product(self) -> None:
+        product = self._get_selected_product()
+        if not product:
+            self.status_msg = "⚠  SELECCIONA UN PRODUCTO PARA VER DETALLE"
+            return
+        app = cast(Any, self.app)
+        app.push_screen(ProductDetailModal(product))
 
     def action_logout(self) -> None:
         self.cart = {}
