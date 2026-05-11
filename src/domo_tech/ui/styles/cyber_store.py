@@ -1,0 +1,463 @@
+"""Cyber Store CSS styles."""
+
+CYBER_STORE_CSS = """
+/* ════════════ BASE ════════════ */
+Screen {
+    background: #05050f;
+}
+
+/* ════════════ LOGIN ════════════ */
+LoginScreen {
+    align: center middle;
+}
+
+#login-box {
+    width: 64;
+    height: auto;
+    border: heavy #ff00ff;
+    background: #0a0a1f;
+    padding: 2 3;
+}
+
+.login-box-wide {
+    width: 86;
+}
+
+#logo {
+    color: #ff00ff;
+    text-align: center;
+    margin-bottom: 1;
+    text-style: bold;
+}
+
+#login-tag {
+    color: #00ffff;
+    text-align: center;
+    margin-bottom: 2;
+}
+
+.field-label {
+    color: #666688;
+    margin-top: 1;
+    margin-bottom: 0;
+    padding-left: 1;
+}
+
+Input {
+    background: #0d0d2b;
+    color: #00ff88;
+    border: tall #ff00ff 40%;
+    margin-bottom: 0;
+}
+
+Input:focus {
+    border: tall #ff00ff;
+    background: #111133;
+}
+
+#btn-login {
+    margin-top: 2;
+    background: #ff00ff 20%;
+    color: #ff00ff;
+    border: tall #ff00ff;
+    width: 100%;
+    text-style: bold;
+}
+
+#btn-login:hover {
+    background: #ff00ff 40%;
+    color: #ffffff;
+}
+
+#login-error {
+    color: #ff3333;
+    text-align: center;
+    height: 1;
+    margin-top: 1;
+}
+
+#login-footer-text {
+    color: #2a2a44;
+    text-align: center;
+    margin-top: 1;
+}
+
+/* ════════════ STORE ════════════ */
+#store-header {
+    height: 2;
+    background: #0a0a1f;
+    border-bottom: heavy #ff00ff;
+    padding: 0 2;
+    align: left middle;
+}
+
+#store-title {
+    color: #ff00ff;
+    text-style: bold;
+    width: 1fr;
+    content-align: left middle;
+}
+
+#user-badge {
+    color: #00ffff;
+    content-align: right middle;
+    padding-right: 2;
+}
+
+#main-area {
+    height: 1fr;
+    min-height: 0;
+}
+
+/* ── Products ── */
+#products-panel {
+    width: 2fr;
+    border-right: heavy #ff00ff 40%;
+    min-height: 0;
+}
+
+#prod-header {
+    height: 3;
+    background: #ff00ff 12%;
+    border-bottom: solid #ff00ff 40%;
+    padding: 0 2;
+    align: left middle;
+}
+
+#prod-header-title {
+    color: #ff00ff;
+    text-style: bold;
+    width: 1fr;
+}
+
+#filter-input {
+    width: 24;
+    height: 1;
+    background: #0a0a1f;
+    color: #ff00ff;
+    border: solid #ff00ff 50%;
+    padding: 0 1;
+}
+
+#filter-input:focus {
+    border: solid #ff00ff;
+}
+
+#products-table {
+    height: 1fr;
+    background: #05050f;
+    min-height: 0;
+}
+
+DataTable {
+    background: #05050f;
+    color: #cccccc;
+}
+
+DataTable > .datatable--header {
+    background: #0a0a2a;
+    color: #ff00ff;
+    text-style: bold;
+}
+
+DataTable > .datatable--cursor {
+    background: #ff00ff 25%;
+    color: #ffffff;
+    text-style: bold;
+}
+
+DataTable > .datatable--hover {
+    background: #ff00ff 10%;
+}
+
+#prod-actions {
+    height: auto;
+    background: #0a0a1f;
+    border-top: solid #1a1a3a;
+    padding: 0 2 1 2;
+    align: left middle;
+}
+
+#prod-actions Button {
+    height: 3;
+}
+
+#btn-add {
+    background: #00ff88 15%;
+    color: #00ff88;
+    border: tall #00ff88;
+    margin-right: 2;
+    text-style: bold;
+}
+
+#btn-add:hover { background: #00ff88 35%; }
+
+#btn-logout {
+    background: #333344;
+    color: #666677;
+    border: tall #444455;
+}
+
+#btn-logout:hover {
+    background: #444455;
+    color: #aaaacc;
+}
+
+/* ── Cart ── */
+#cart-panel {
+    width: 1fr;
+    background: #080818;
+    min-height: 0;
+}
+
+#cart-header {
+    height: 2;
+    background: #00ffff 12%;
+    border-bottom: solid #00ffff 40%;
+    padding: 0 2;
+    align: left middle;
+}
+
+#cart-header-title {
+    color: #00ffff;
+    text-style: bold;
+    width: 1fr;
+}
+
+#cart-count {
+    color: #00ff88;
+    text-style: bold;
+}
+
+#cart-items {
+    height: 1fr;
+    padding: 1 0;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.cart-item {
+    height: 3;
+    padding: 0 2;
+    border-bottom: solid #1a1a2e;
+    align: left middle;
+}
+
+.cart-item:hover {
+    background: #00ffff 05%;
+}
+
+.ci-name {
+    color: #cccccc;
+    width: 1fr;
+}
+
+.ci-qty {
+    color: #888899;
+    width: 6;
+    content-align: center middle;
+}
+
+.ci-price {
+    color: #ffff44;
+    width: 10;
+    content-align: right middle;
+    text-style: bold;
+}
+
+#cart-empty {
+    color: #333355;
+    text-align: center;
+    padding-top: 4;
+}
+
+#cart-footer {
+    height: auto;
+    background: #0a0a1f;
+    border-top: heavy #00ffff;
+    padding: 0 2 1 2;
+}
+
+#total-row {
+    align: left middle;
+    height: 1;
+    margin-bottom: 0;
+}
+
+#total-label {
+    color: #555577;
+    width: 1fr;
+}
+
+#total-value {
+    color: #00ff88;
+    text-style: bold;
+}
+
+#btn-checkout {
+    background: #00ffff 20%;
+    color: #00ffff;
+    border: tall #00ffff;
+    width: 100%;
+    text-style: bold;
+}
+
+#btn-checkout:hover { background: #00ffff 40%; color: #ffffff; }
+
+#btn-clear {
+    background: #ff3333 10%;
+    color: #ff3333;
+    border: tall #ff3333;
+    width: 100%;
+    margin-top: 1;
+}
+
+#btn-clear:hover { background: #ff3333 30%; }
+
+/* ── Status bar ── */
+#status-bar {
+    height: 2;
+    background: #0a0a1f;
+    border-top: solid #ff00ff 25%;
+    padding: 0 2;
+    align: left middle;
+}
+
+#status-text {
+    color: #00ff88;
+    width: 1fr;
+}
+
+#clock {
+    color: #666688;
+}
+
+#status-bar Static {
+    height: 1;
+}
+
+/* ════════════ CHECKOUT MODAL ════════════ */
+CheckoutModal {
+    align: center middle;
+    background: #000008 80%;
+}
+
+#checkout-box {
+    width: 56;
+    height: auto;
+    border: heavy #00ffff;
+    background: #0a0a1f;
+    padding: 2 3;
+}
+
+#checkout-title {
+    color: #00ffff;
+    text-style: bold;
+    text-align: center;
+    margin-bottom: 1;
+}
+
+#checkout-divider {
+    color: #1a1a3a;
+    text-align: center;
+    margin-bottom: 1;
+}
+
+.checkout-row {
+    height: 2;
+    align: left middle;
+    border-bottom: solid #111128;
+}
+
+.co-name { color: #aaaacc; width: 1fr; }
+.co-qty  { color: #666688; width: 5; content-align: center middle; }
+.co-sub  { color: #ffff44; width: 12; content-align: right middle; }
+
+#checkout-total-row {
+    height: 2;
+    align: left middle;
+    margin-top: 1;
+    border-top: solid #00ffff 40%;
+    padding-top: 1;
+}
+
+#co-total-label { color: #555577; width: 1fr; text-style: bold; }
+#co-total-val   { color: #00ff88; text-style: bold; }
+
+#checkout-warn {
+    color: #ffaa00;
+    text-align: center;
+    margin-top: 1;
+}
+
+#checkout-btns {
+    margin-top: 2;
+    align: center middle;
+    height: 3;
+}
+
+#btn-confirm {
+    background: #00ff88 20%;
+    color: #00ff88;
+    border: tall #00ff88;
+    width: 1fr;
+    margin-right: 2;
+    text-style: bold;
+}
+
+#btn-confirm:hover { background: #00ff88 40%; color: #000; }
+
+#btn-cancel {
+    background: #ff3333 10%;
+    color: #ff3333;
+    border: tall #ff3333;
+    width: 1fr;
+}
+
+#btn-cancel:hover { background: #ff3333 30%; }
+
+/* ════════════ SUCCESS MODAL ════════════ */
+SuccessModal {
+    align: center middle;
+    background: #000008 80%;
+}
+
+#success-box {
+    width: 50;
+    height: auto;
+    border: heavy #00ff88;
+    background: #0a1a0a;
+    padding: 3 4;
+    align: center middle;
+}
+
+#success-icon {
+    color: #00ff88;
+    text-align: center;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#success-msg {
+    color: #cccccc;
+    text-align: center;
+    margin-bottom: 2;
+}
+
+#success-order {
+    color: #00ffff;
+    text-align: center;
+    text-style: bold;
+    margin-bottom: 2;
+}
+
+#btn-ok {
+    background: #00ff88 20%;
+    color: #00ff88;
+    border: tall #00ff88;
+    width: 100%;
+    text-style: bold;
+}
+
+#btn-ok:hover { background: #00ff88 40%; }
+"""
