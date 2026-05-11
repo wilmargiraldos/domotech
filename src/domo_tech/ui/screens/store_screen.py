@@ -44,7 +44,7 @@ class StoreScreen(Screen[None]):
 
     cart = reactive({})
     status_msg: reactive[str] = reactive(
-        "SISTEMA LISTO // NAVEGA CON ↑↓ // [A] AGREGAR // [C] CHECKOUT"
+        "SISTEMA LISTO // NAVEGA CON ↑↓ // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
     )
 
     def __init__(self, products: list[Product] | None = None, **kwargs: Any):
@@ -68,7 +68,7 @@ class StoreScreen(Screen[None]):
             with Vertical(id="products-panel"):
                 with Horizontal(id="prod-header"):
                     yield Static("▸ CATÁLOGO DE PRODUCTOS", id="prod-header-title")
-                    yield Input(placeholder="Filtrar...", id="filter-input")
+                    yield Input(placeholder="Buscar por nombre...", id="filter-input")
                 yield DataTable(id="products-table", cursor_type="row")
                 with Horizontal(id="prod-actions"):
                     yield Button("⊕  AGREGAR AL CARRITO  [A]", id="btn-add")
@@ -78,7 +78,7 @@ class StoreScreen(Screen[None]):
                 with Horizontal(id="cart-header"):
                     yield Static("▸ CARRITO", id="cart-header-title")
                     yield Static("0 ítems", id="cart-count")
-                with ScrollableContainer(id="cart-items"):
+                with ScrollableContainer(id="cart-items", can_focus=False):
                     yield Static("[ CARRITO VACÍO ]", id="cart-empty")
                 with Container(id="cart-footer"):
                     with Horizontal(id="total-row"):
@@ -129,11 +129,16 @@ class StoreScreen(Screen[None]):
 
     @on(Input.Changed, "#filter-input")
     def filter_products(self, event: Input.Changed) -> None:
-        query = event.value.lower()
-        filtered = [
-            p for p in self._products if query in p["name"].lower() or query in p["cat"].lower()
-        ]
+        query = event.value.strip().lower()
+        if not query:
+            self._build_table(self._products)
+            self.status_msg = "FILTRO LIMPIO // CATÁLOGO COMPLETO"
+            return
+
+        filtered = [p for p in self._products if p["name"].lower().startswith(query)]
         self._build_table(filtered)
+        total = len(filtered)
+        self.status_msg = f"FILTRO: {event.value} // {total} RESULTADO{'S' if total != 1 else ''}"
 
     def _get_selected_product(self) -> Product | None:
         table = self.query_one("#products-table", DataTable)

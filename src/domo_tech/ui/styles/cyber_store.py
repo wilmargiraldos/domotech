@@ -119,7 +119,7 @@ Input:focus {
 }
 
 #prod-header {
-    height: 3;
+    height: 4;
     background: #ff00ff 12%;
     border-bottom: solid #ff00ff 40%;
     padding: 0 2;
@@ -130,11 +130,12 @@ Input:focus {
     color: #ff00ff;
     text-style: bold;
     width: 1fr;
+    min-width: 0;
 }
 
 #filter-input {
-    width: 24;
-    height: 1;
+    width: 30;
+    height: 3;
     background: #0a0a1f;
     color: #ff00ff;
     border: solid #ff00ff 50%;
@@ -143,6 +144,8 @@ Input:focus {
 
 #filter-input:focus {
     border: solid #ff00ff;
+    color: #00ff88;
+    background: #111133;
 }
 
 #products-table {
