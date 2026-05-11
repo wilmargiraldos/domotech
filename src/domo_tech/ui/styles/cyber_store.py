@@ -505,6 +505,76 @@ ProductDetailModal {
     color: #ffffff;
 }
 
+/* ════════════ HELP MODAL ════════════ */
+HelpModal {
+    align: center middle;
+    background: #000008 80%;
+}
+
+#help-box {
+    width: 82;
+    height: 32;
+    border: heavy #00ffff;
+    background: #0a0a1f;
+    padding: 1 2;
+}
+
+#help-title {
+    color: #00ffff;
+    text-style: bold;
+    text-align: center;
+    height: 1;
+    margin-bottom: 1;
+}
+
+#help-search {
+    height: 3;
+    width: 100%;
+    margin-bottom: 1;
+    border: solid #00ffff 60%;
+    color: #00ff88;
+}
+
+#help-search:focus {
+    border: solid #00ffff;
+    background: #111133;
+}
+
+#help-results {
+    height: 1fr;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 1;
+}
+
+.help-entry {
+    color: #cccccc;
+    border-bottom: solid #1a1a3a;
+    padding: 1 0;
+    margin-bottom: 1;
+}
+
+.help-empty {
+    color: #ffaa00;
+    content-align: center middle;
+    height: 5;
+}
+
+#btn-help-close {
+    background: #00ffff 15%;
+    color: #00ffff;
+    border: tall #00ffff;
+    width: 100%;
+    height: 3;
+    text-style: bold;
+    margin-top: 1;
+}
+
+#btn-help-close:hover {
+    background: #00ffff 35%;
+    color: #ffffff;
+}
+
 /* ════════════ SUCCESS MODAL ════════════ */
 SuccessModal {
     align: center middle;

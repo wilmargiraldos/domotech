@@ -4,10 +4,88 @@ from __future__ import annotations
 
 from typing import Callable
 
+from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, ScrollableContainer
+from textual.binding import Binding
 from textual.screen import ModalScreen
-from textual.widgets import Button, Static
+from textual.widgets import Button, Input, Static
+
+
+HELP_TOPICS = [
+    {
+        "title": "Navegación general",
+        "keys": "↑↓ / TAB / ENTER",
+        "body": [
+            "Usa ↑↓ para moverte por el catálogo de productos.",
+            "Usa TAB para recorrer controles interactivos.",
+            "ENTER activa el control enfocado cuando aplica.",
+        ],
+    },
+    {
+        "title": "Buscar productos",
+        "keys": "Filtro de catálogo",
+        "body": [
+            "Escribe en la caja de búsqueda para filtrar productos por inicio del nombre.",
+            "Backspace borra caracteres; al limpiar el campo vuelve el catálogo completo.",
+            "La barra de estado muestra el texto filtrado y la cantidad de resultados.",
+        ],
+    },
+    {
+        "title": "Vista previa",
+        "keys": "V",
+        "body": [
+            "Selecciona un producto y presiona V para abrir su ficha técnica.",
+            "La ficha muestra descripción, características, especificaciones, precio y stock.",
+            "La vista previa no agrega productos al carrito.",
+        ],
+    },
+    {
+        "title": "Agregar al carrito",
+        "keys": "A / botón Agregar",
+        "body": [
+            "Selecciona un producto y presiona A para agregar una unidad al carrito.",
+            "No se permite agregar más unidades que las disponibles en stock.",
+            "Los productos con stock 0 permanecen visibles, pero no pueden agregarse.",
+        ],
+    },
+    {
+        "title": "Carrito",
+        "keys": "X / botón Vaciar",
+        "body": [
+            "El panel derecho muestra productos agregados, cantidades y subtotal por línea.",
+            "Presiona X para vaciar completamente el carrito.",
+            "El total se actualiza cada vez que agregas o retiras el contenido completo.",
+        ],
+    },
+    {
+        "title": "Checkout",
+        "keys": "C / botón Checkout",
+        "body": [
+            "Presiona C para abrir el resumen de orden.",
+            "Al confirmar, el inventario persistente descuenta el stock comprado.",
+            "Después de una compra exitosa se limpia el filtro y vuelve el catálogo completo.",
+        ],
+    },
+    {
+        "title": "Sesión",
+        "keys": "Q / botón Logout",
+        "body": [
+            "Presiona Q para cerrar sesión y volver a login.",
+            "Al hacer logout se descarta el carrito actual.",
+            "La pantalla de login limpia usuario, contraseña y errores visibles.",
+        ],
+    },
+    {
+        "title": "Ayuda",
+        "keys": "F1 / H / ESC",
+        "body": [
+            "Presiona F1 o H para abrir esta ventana.",
+            "Usa el buscador para filtrar temas por acción, tecla o palabra clave.",
+            "Presiona ESC o el botón Cerrar para volver a la tienda.",
+        ],
+    },
+]
 
 
 class CheckoutModal(ModalScreen):
@@ -82,6 +160,70 @@ class ProductDetailModal(ModalScreen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-detail-close":
             self.dismiss()
+
+
+class HelpModal(ModalScreen):
+    """Searchable in-app help for store shortcuts and workflows."""
+
+    BINDINGS = [
+        Binding("escape", "dismiss", "Cerrar"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Container(id="help-box"):
+            yield Static("◈  AYUDA DE DOMO-TECH  ◈", id="help-title")
+            yield Input(placeholder="Buscar tema, tecla o acción...", id="help-search")
+            with ScrollableContainer(id="help-results"):
+                pass
+            yield Button("⟫  CERRAR  ⟪", id="btn-help-close")
+
+    def on_mount(self) -> None:
+        self._render_topics("")
+        self.query_one("#help-search", Input).focus()
+
+    @on(Input.Changed, "#help-search")
+    def filter_help_topics(self, event: Input.Changed) -> None:
+        self._render_topics(event.value)
+
+    def action_dismiss(self) -> None:
+        self.dismiss()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "btn-help-close":
+            self.dismiss()
+
+    def _render_topics(self, query: str) -> None:
+        results = self.query_one("#help-results", ScrollableContainer)
+        for widget in results.query(".help-entry, .help-empty"):
+            widget.remove()
+
+        normalized_query = query.strip().lower()
+        matches = [
+            topic
+            for topic in HELP_TOPICS
+            if self._topic_matches(topic, normalized_query)
+        ]
+
+        if not matches:
+            results.mount(Static("Sin temas encontrados.", classes="help-empty"))
+            return
+
+        for topic in matches:
+            body = "\n".join(f"  - {line}" for line in topic["body"])
+            content = f"{topic['title']}\nTeclas: {topic['keys']}\n{body}"
+            results.mount(Static(content, classes="help-entry", markup=False))
+
+    def _topic_matches(self, topic: dict, query: str) -> bool:
+        if not query:
+            return True
+        searchable = " ".join(
+            [
+                str(topic["title"]),
+                str(topic["keys"]),
+                " ".join(str(line) for line in topic["body"]),
+            ]
+        ).lower()
+        return query in searchable
 
 
 class SuccessModal(ModalScreen):

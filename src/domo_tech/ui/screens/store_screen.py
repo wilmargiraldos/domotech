@@ -42,7 +42,7 @@ class InventoryProvider(Protocol):
 
 
 from domo_tech.ui.screens.cart_item import CartItem
-from domo_tech.ui.screens.modals import CheckoutModal, ProductDetailModal, SuccessModal
+from domo_tech.ui.screens.modals import CheckoutModal, HelpModal, ProductDetailModal, SuccessModal
 
 
 class StoreScreen(Screen[None]):
@@ -54,11 +54,13 @@ class StoreScreen(Screen[None]):
         Binding("c", "checkout", "Checkout"),
         Binding("x", "clear_cart", "Vaciar carrito"),
         Binding("v", "view_product", "Vista"),
+        Binding("h", "show_help", "Ayuda"),
+        Binding("f1", "show_help", "Ayuda"),
     ]
 
     cart: reactive[dict[int, CartEntry]] = reactive({})
     status_msg: reactive[str] = reactive(
-        "SISTEMA LISTO // NAVEGA CON ↑↓ // [V] DETALLE // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
+        "SISTEMA LISTO // [F1/H] AYUDA // NAVEGA CON ↑↓ // [V] DETALLE // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
     )
 
     def __init__(
@@ -224,6 +226,10 @@ class StoreScreen(Screen[None]):
             return
         app = cast(Any, self.app)
         app.push_screen(ProductDetailModal(product))
+
+    def action_show_help(self) -> None:
+        app = cast(Any, self.app)
+        app.push_screen(HelpModal())
 
     def action_logout(self) -> None:
         self.cart = {}
