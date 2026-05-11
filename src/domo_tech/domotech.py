@@ -11,12 +11,10 @@ Usuarios de prueba:
   user  / pass
 """
 
-from typing import cast
-
 from textual.app import App
-from domo_tech.cyber_store import PRODUCTS
+from domo_tech.inventory import InventoryStore
 from domo_tech.ui.screens.login import LoginScreen, DEFAULT_USERS
-from domo_tech.ui.screens.store_screen import Product, StoreScreen
+from domo_tech.ui.screens.store_screen import StoreScreen
 from domo_tech.ui.styles import CYBER_STORE_CSS
 
 # ─── CSS ──────────────────────────────────────────────────────────
@@ -32,8 +30,12 @@ class DomoTechStore(App[None]):
 
     current_user: str = ""
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.inventory = InventoryStore()
+
     def _show_store(self) -> None:
-        self.push_screen(StoreScreen(cast(list[Product], PRODUCTS)))
+        self.push_screen(StoreScreen(self.inventory.list_products(), inventory_store=self.inventory))
 
     def on_mount(self) -> None:
         self.push_screen(

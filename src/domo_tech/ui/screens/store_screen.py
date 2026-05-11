@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, TypedDict, cast
+from typing import Any, Protocol, TypedDict, cast
 
 from rich.text import Text
 from textual import on
@@ -30,6 +30,14 @@ class CartEntry(TypedDict):
     qty: int
 
 
+class InventoryProvider(Protocol):
+    def list_products(self) -> list[Product]:
+        ...
+
+    def purchase(self, items: dict[int, int]) -> tuple[bool, str]:
+        ...
+
+
 from domo_tech.ui.screens.cart_item import CartItem
 from domo_tech.ui.screens.modals import CheckoutModal, SuccessModal
 
@@ -49,9 +57,15 @@ class StoreScreen(Screen[None]):
         "SISTEMA LISTO // NAVEGA CON ↑↓ // [A] AGREGAR // [C] CHECKOUT // [X] VACIAR // [Q] LOGOUT"
     )
 
-    def __init__(self, products: list[Product] | None = None, **kwargs: Any):
+    def __init__(
+        self,
+        products: list[Product] | None = None,
+        inventory_store: InventoryProvider | None = None,
+        **kwargs: Any,
+    ):
         super().__init__(**kwargs)
         self._products: list[Product] = list(products or [])
+        self._inventory_store = inventory_store
         self.cart = {}
 
     def compose(self) -> ComposeResult:
@@ -133,15 +147,23 @@ class StoreScreen(Screen[None]):
     @on(Input.Changed, "#filter-input")
     def filter_products(self, event: Input.Changed) -> None:
         query = event.value.strip().lower()
+        self._apply_product_filter(query)
+        if not query:
+            self.status_msg = "FILTRO LIMPIO // CATÁLOGO COMPLETO"
+            return
+
+        total = self.query_one("#products-table", DataTable).row_count
+        self.status_msg = f"FILTRO: {event.value} // {total} RESULTADO{'S' if total != 1 else ''}"
+
+    def _apply_product_filter(self, query: str | None = None) -> None:
+        if query is None:
+            query = self.query_one("#filter-input", Input).value.strip().lower()
         if not query:
             self._build_table(self._products)
-            self.status_msg = "FILTRO LIMPIO // CATÁLOGO COMPLETO"
             return
 
         filtered = [p for p in self._products if p["name"].lower().startswith(query)]
         self._build_table(filtered)
-        total = len(filtered)
-        self.status_msg = f"FILTRO: {event.value} // {total} RESULTADO{'S' if total != 1 else ''}"
 
     def _get_selected_product(self) -> Product | None:
         table = self.query_one("#products-table", DataTable)
@@ -159,6 +181,9 @@ class StoreScreen(Screen[None]):
         product = self._get_selected_product()
         if not product:
             self.status_msg = "⚠  SELECCIONA UN PRODUCTO PRIMERO"
+            return
+        if product["stock"] <= 0:
+            self.status_msg = f"✗  SIN STOCK: {product['name']}"
             return
         pid = product["id"]
         if pid in self.cart:
@@ -206,11 +231,47 @@ class StoreScreen(Screen[None]):
         app.push_screen(CheckoutModal(dict(self.cart), self._on_order_confirmed))
 
     def _on_order_confirmed(self) -> None:
+        items = {pid: entry["qty"] for pid, entry in self.cart.items()}
+        success, message = self._commit_inventory_purchase(items)
+        if not success:
+            self.status_msg = f"✗  {message}"
+            self._reload_products()
+            self._refresh_cart_ui()
+            return
+
         self.cart = {}
+        self._reload_products()
+        self._clear_product_filter()
         self._refresh_cart_ui()
-        self.status_msg = "✓  ORDEN PROCESADA"
+        self.status_msg = f"✓  ORDEN PROCESADA // {message}"
         app = cast(Any, self.app)
         app.push_screen(SuccessModal())
+
+    def _commit_inventory_purchase(self, items: dict[int, int]) -> tuple[bool, str]:
+        if self._inventory_store is not None:
+            return self._inventory_store.purchase(items)
+
+        products_by_id = {product["id"]: product for product in self._products}
+        for product_id, qty in items.items():
+            product = products_by_id.get(product_id)
+            if product is None:
+                return False, f"PRODUCTO {product_id} NO EXISTE"
+            if product["stock"] < qty:
+                return False, f"STOCK INSUFICIENTE: {product['name']} ({product['stock']} DISPONIBLES)"
+
+        for product_id, qty in items.items():
+            products_by_id[product_id]["stock"] -= qty
+        return True, "INVENTARIO ACTUALIZADO"
+
+    def _reload_products(self) -> None:
+        if self._inventory_store is not None:
+            self._products = self._inventory_store.list_products()
+        self._apply_product_filter()
+
+    def _clear_product_filter(self) -> None:
+        filter_input = self.query_one("#filter-input", Input)
+        filter_input.value = ""
+        self._apply_product_filter("")
 
     def _refresh_cart_ui(self) -> None:
         container = self.query_one("#cart-items", ScrollableContainer)
