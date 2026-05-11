@@ -1,4 +1,4 @@
-"""Compatibility facade for the Cyber Store screen module.
+"""Compatibility facade for the DomoTech screen module.
 
 The concrete components live in dedicated modules so the screen layer stays
 maintainable without breaking existing imports from `domo_tech.ui.screens.store`.

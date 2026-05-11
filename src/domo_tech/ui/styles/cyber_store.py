@@ -1,4 +1,4 @@
-"""Cyber Store CSS styles."""
+"""Cyber Punk for Online Store CSS styles."""
 
 CYBER_STORE_CSS = """
 /* ════════════ BASE ════════════ */

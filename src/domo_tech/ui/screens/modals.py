@@ -51,7 +51,7 @@ class SuccessModal(ModalScreen):
     def compose(self) -> ComposeResult:
         import random
 
-        order_id = f"NX-{random.randint(100000, 999999)}"
+        order_id = f"DTWG-{random.randint(100000, 999999)}"
         with Container(id="success-box"):
             yield Static("▓▓▓  TRANSACCIÓN EXITOSA  ▓▓▓", id="success-icon")
             yield Static(

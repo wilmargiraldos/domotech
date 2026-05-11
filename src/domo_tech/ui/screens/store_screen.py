@@ -1,8 +1,8 @@
-"""Main Cyber Store screen."""
+"""Main Store screen."""
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any, TypedDict, cast
 
 from rich.text import Text
@@ -56,8 +56,8 @@ class StoreScreen(Screen[None]):
         current_user = str(getattr(app, "current_user", ""))
 
         with Horizontal(id="store-header"):
-            yield Static("⬡  CYBER//STORE  ⬡", id="store-title")
-            yield Static(f"[ {current_user.upper()}@NEXUS ]", id="user-badge")
+            yield Static("⬡  DOMO-TECH - TIENDA ONLINE  ⬡", id="store-title")
+            yield Static(f"[ {current_user.upper()}@SOFTEDGE-LABS ]", id="user-badge")
 
         with Horizontal(id="main-area"):
             with Vertical(id="products-panel"):
@@ -83,15 +83,15 @@ class StoreScreen(Screen[None]):
                     yield Button("✕  VACIAR  [X]", id="btn-clear")
 
         with Horizontal(id="status-bar"):
-            yield Static(self.status_msg, id="status-text")
-            yield Static("", id="clock")
+            yield Static(self.status_msg, id="status-text", markup=False)
+            yield Static("", id="clock", markup=False)
 
     def on_mount(self) -> None:
         self._build_table(self._products)
         self.set_interval(1, self._tick)
 
     def _tick(self) -> None:
-        now = datetime.now(timezone.utc).strftime("UTC %H:%M:%S")
+        now = datetime.now().astimezone().strftime("%H:%M:%S")
         self.query_one("#clock", Static).update(now)
 
     def watch_status_msg(self, message: str) -> None:

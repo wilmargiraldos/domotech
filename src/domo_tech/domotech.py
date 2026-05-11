@@ -24,7 +24,6 @@ from domo_tech.ui.styles import CYBER_STORE_CSS
 CSS = CYBER_STORE_CSS
 USE_WIDE_LOGIN_BANNER = False
 
-
 # ─── App ──────────────────────────────────────────────────────────
 
 class DomoTechStore(App[None]):
