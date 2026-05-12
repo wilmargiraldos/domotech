@@ -229,17 +229,18 @@ class HelpModal(ModalScreen):
 class SuccessModal(ModalScreen):
     """Modal de confirmación de compra exitosa."""
 
-    def compose(self) -> ComposeResult:
-        import random
+    def __init__(self, order_id: str = "DTWG-PENDIENTE", **kwargs):
+        super().__init__(**kwargs)
+        self._order_id = order_id
 
-        order_id = f"DTWG-{random.randint(100000, 999999)}"
+    def compose(self) -> ComposeResult:
         with Container(id="success-box"):
             yield Static("▓▓▓  TRANSACCIÓN EXITOSA  ▓▓▓", id="success-icon")
             yield Static(
                 "Tu orden ha sido procesada y encriptada\nen la blockchain de SoftEdge Labs PAY.",
                 id="success-msg",
             )
-            yield Static(f"ORDEN # {order_id}", id="success-order")
+            yield Static(f"ORDEN # {self._order_id}", id="success-order")
             yield Button("⟫  VOLVER A LA TIENDA  ⟪", id="btn-ok")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

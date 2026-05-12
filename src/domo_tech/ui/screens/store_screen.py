@@ -41,6 +41,14 @@ class InventoryProvider(Protocol):
         ...
 
 
+class TraceProvider(Protocol):
+    def record_sale(self, username: str, cart_entries: list[dict[str, Any]]) -> dict[str, Any]:
+        ...
+
+    def record_event(self, event_type: str, **details: Any) -> dict[str, Any]:
+        ...
+
+
 from domo_tech.ui.screens.cart_item import CartItem
 from domo_tech.ui.screens.modals import CheckoutModal, HelpModal, ProductDetailModal, SuccessModal
 
@@ -67,11 +75,13 @@ class StoreScreen(Screen[None]):
         self,
         products: list[Product] | None = None,
         inventory_store: InventoryProvider | None = None,
+        trace_store: TraceProvider | None = None,
         **kwargs: Any,
     ):
         super().__init__(**kwargs)
         self._products: list[Product] = list(products or [])
         self._inventory_store = inventory_store
+        self._trace_store = trace_store
         self.cart = {}
 
     def compose(self) -> ComposeResult:
@@ -187,14 +197,22 @@ class StoreScreen(Screen[None]):
         product = self._get_selected_product()
         if not product:
             self.status_msg = "⚠  SELECCIONA UN PRODUCTO PRIMERO"
+            self._record_event("cart_add_failed_no_selection")
             return
         if product["stock"] <= 0:
             self.status_msg = f"✗  SIN STOCK: {product['name']}"
+            self._record_event("cart_add_failed_no_stock", product_id=product["id"], product_name=product["name"])
             return
         pid = product["id"]
         if pid in self.cart:
             if self.cart[pid]["qty"] >= product["stock"]:
                 self.status_msg = f"✗  STOCK INSUFICIENTE — SOLO {product['stock']} UNIDADES"
+                self._record_event(
+                    "cart_add_failed_stock_limit",
+                    product_id=product["id"],
+                    product_name=product["name"],
+                    stock=product["stock"],
+                )
                 return
             self.cart[pid]["qty"] += 1
         else:
@@ -202,6 +220,12 @@ class StoreScreen(Screen[None]):
 
         self.cart = dict(self.cart)
         self.status_msg = f"✓  AGREGADO: {product['name']}"
+        self._record_event(
+            "cart_item_added",
+            product_id=product["id"],
+            product_name=product["name"],
+            qty=self.cart[pid]["qty"],
+        )
         self._refresh_cart_ui()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -215,9 +239,11 @@ class StoreScreen(Screen[None]):
             self.action_clear_cart()
 
     def action_clear_cart(self) -> None:
+        item_count = sum(entry["qty"] for entry in self.cart.values())
         self.cart = {}
         self._refresh_cart_ui()
         self.status_msg = "CARRITO VACIADO"
+        self._record_event("cart_cleared", item_count=item_count)
 
     def action_view_product(self) -> None:
         product = self._get_selected_product()
@@ -232,9 +258,11 @@ class StoreScreen(Screen[None]):
         app.push_screen(HelpModal())
 
     def action_logout(self) -> None:
+        app = cast(Any, self.app)
+        username = str(getattr(app, "current_user", ""))
+        self._record_event("logout", username=username)
         self.cart = {}
         self._refresh_cart_ui()
-        app = cast(Any, self.app)
         app.current_user = ""
         login_screen = app.screen_stack[-2] if len(app.screen_stack) >= 2 else None
         if isinstance(login_screen, LoginScreen):
@@ -244,7 +272,9 @@ class StoreScreen(Screen[None]):
     def action_checkout(self) -> None:
         if not self.cart:
             self.status_msg = "⚠  EL CARRITO ESTÁ VACÍO"
+            self._record_event("checkout_failed_empty_cart")
             return
+        self._record_event("checkout_started", item_count=sum(entry["qty"] for entry in self.cart.values()))
         app = cast(Any, self.app)
         app.push_screen(CheckoutModal(dict(self.cart), self._on_order_confirmed))
 
@@ -253,17 +283,20 @@ class StoreScreen(Screen[None]):
         success, message = self._commit_inventory_purchase(items)
         if not success:
             self.status_msg = f"✗  {message}"
+            self._record_event("checkout_failed_inventory", message=message)
             self._reload_products()
             self._refresh_cart_ui()
             return
 
+        sale = self._record_sale()
         self.cart = {}
         self._reload_products()
         self._clear_product_filter()
         self._refresh_cart_ui()
-        self.status_msg = f"✓  ORDEN PROCESADA // {message}"
+        order_id = str(sale.get("order_id", "DTWG-PENDIENTE"))
+        self.status_msg = f"✓  ORDEN PROCESADA // {order_id} // {message}"
         app = cast(Any, self.app)
-        app.push_screen(SuccessModal())
+        app.push_screen(SuccessModal(order_id))
 
     def _commit_inventory_purchase(self, items: dict[int, int]) -> tuple[bool, str]:
         if self._inventory_store is not None:
@@ -285,6 +318,22 @@ class StoreScreen(Screen[None]):
         if self._inventory_store is not None:
             self._products = self._inventory_store.list_products()
         self._apply_product_filter()
+
+    def _record_sale(self) -> dict[str, Any]:
+        app = cast(Any, self.app)
+        username = str(getattr(app, "current_user", ""))
+        entries = [{"product": entry["product"], "qty": entry["qty"]} for entry in self.cart.values()]
+        if self._trace_store is not None:
+            return self._trace_store.record_sale(username, entries)
+        return {"order_id": f"DTWG-{datetime.now().strftime('%H%M%S')}"}
+
+    def _record_event(self, event_type: str, **details: Any) -> None:
+        if self._trace_store is not None:
+            app = cast(Any, self.app)
+            username = str(getattr(app, "current_user", ""))
+            if username and "username" not in details:
+                details["username"] = username
+            self._trace_store.record_event(event_type, **details)
 
     def _clear_product_filter(self) -> None:
         filter_input = self.query_one("#filter-input", Input)

@@ -13,6 +13,7 @@ Usuarios de prueba:
 
 from textual.app import App
 from domo_tech.inventory import InventoryStore
+from domo_tech.tracing import TraceStore
 from domo_tech.ui.screens.login import LoginScreen, DEFAULT_USERS
 from domo_tech.ui.screens.store_screen import StoreScreen
 from domo_tech.ui.styles import CYBER_STORE_CSS
@@ -33,9 +34,16 @@ class DomoTechStore(App[None]):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.inventory = InventoryStore()
+        self.trace = TraceStore()
 
     def _show_store(self) -> None:
-        self.push_screen(StoreScreen(self.inventory.list_products(), inventory_store=self.inventory))
+        self.push_screen(
+            StoreScreen(
+                self.inventory.list_products(),
+                inventory_store=self.inventory,
+                trace_store=self.trace,
+            )
+        )
 
     def on_mount(self) -> None:
         self.push_screen(

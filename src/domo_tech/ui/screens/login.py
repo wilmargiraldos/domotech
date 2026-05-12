@@ -7,6 +7,7 @@ independently from the rest of the app screens.
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Any, cast
 
 from textual.app import ComposeResult
 from textual.containers import Container
@@ -78,11 +79,20 @@ class LoginScreen(Screen):
 
         if not user or not pwd:
             err.update("⚠  CAMPOS VACÍOS — INGRESA USUARIO Y CONTRASEÑA")
+            self._record_event("login_validation_failed", username=user or "")
             return
 
         if self._users.get(user) == pwd:
             self.app.current_user = user
+            self._record_event("login_success", username=user)
             self._on_login_success()
         else:
             err.update("✗  ACCESO DENEGADO — CREDENCIALES INVÁLIDAS")
             self.query_one("#input-pass", Input).value = ""
+            self._record_event("login_failed", username=user)
+
+    def _record_event(self, event_type: str, **details: Any) -> None:
+        app = cast(Any, self.app)
+        trace = getattr(app, "trace", None)
+        if trace is not None:
+            trace.record_event(event_type, **details)
