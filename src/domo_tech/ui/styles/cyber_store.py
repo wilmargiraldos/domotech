@@ -112,6 +112,154 @@ Input:focus {
     margin-top: 1;
 }
 
+/* ════════════ ADMIN ════════════ */
+AdminScreen {
+    align: center top;
+    background: #05050f;
+}
+
+#admin-shell {
+    height: 100%;
+    padding: 1 2;
+}
+
+#admin-header {
+    height: 2;
+    background: #0a0a1f;
+    border-bottom: heavy #00ffff;
+    padding: 0 2;
+    align: left middle;
+}
+
+#admin-title {
+    color: #00ffff;
+    text-style: bold;
+    width: 1fr;
+}
+
+#admin-user {
+    color: #ff00ff;
+    text-align: right;
+}
+
+#admin-nav {
+    margin-top: 1;
+}
+
+#admin-nav Button {
+    width: 1fr;
+    margin-right: 1;
+}
+
+#admin-nav Button:last-child {
+    margin-right: 0;
+}
+
+#admin-kpis {
+    margin-top: 1;
+}
+
+#admin-kpis Static {
+    width: 1fr;
+    margin-right: 1;
+    padding: 1 2;
+    border: solid #1a1a3a;
+    background: #0a0a1f;
+    color: #cccccc;
+}
+
+#admin-kpis Static:last-child {
+    margin-right: 0;
+}
+
+#admin-status {
+    margin-top: 1;
+    color: #00ff88;
+    text-align: center;
+}
+
+#admin-content {
+    height: 1fr;
+    min-height: 0;
+    margin-top: 1;
+    padding: 1 2;
+    background: #0a0a1f;
+    border: heavy #1a1a3a;
+}
+
+.admin-section-title {
+    color: #ff00ff;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+.admin-field-label {
+    color: #666688;
+    margin-top: 1;
+    margin-bottom: 0;
+}
+
+#admin-users-layout,
+#admin-products-layout {
+    height: auto;
+}
+
+#admin-users-table-box,
+#admin-products-table-box {
+    width: 2fr;
+    margin-right: 1;
+}
+
+#admin-user-editor,
+#admin-product-editor {
+    width: 3fr;
+    background: #05050f;
+    border: solid #1a1a3a;
+    padding: 1 2;
+}
+
+#admin-users-table,
+#admin-products-table {
+    height: 18;
+    margin-bottom: 1;
+}
+
+#admin-user-editor Input,
+#admin-product-editor Input {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+#admin-user-editor Button,
+#admin-product-editor Button {
+    margin-top: 1;
+    width: 100%;
+}
+
+#admin-low-stock,
+#admin-sales-overview,
+#admin-overview-text,
+#admin-sales-chart,
+#admin-top-products-chart,
+#admin-inventory-chart,
+#admin-events-chart,
+#admin-order-status-chart,
+#admin-revenue-chart {
+    margin-top: 1;
+    color: #cccccc;
+    background: #05050f;
+    border: solid #1a1a2e;
+    padding: 1 2;
+}
+
+#admin-log-scroll {
+    height: 1fr;
+    min-height: 20;
+    background: #05050f;
+    border: solid #1a1a2e;
+    padding: 1 2;
+}
+
 RegisterModal {
     align: center middle;
     background: #000008 80%;

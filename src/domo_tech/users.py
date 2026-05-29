@@ -59,6 +59,46 @@ class UserStore:
     def list_users(self) -> list[UserRecord]:
         return [dict(user) for user in self._users]
 
+    def update_user(
+        self,
+        user_id: int,
+        *,
+        username: str | None = None,
+        password: str | None = None,
+        role: str | None = None,
+        active: bool | None = None,
+    ) -> tuple[bool, str, UserRecord | None]:
+        user = self.get_by_id(user_id)
+        if user is None:
+            return False, "USUARIO NO ENCONTRADO", None
+
+        new_username = username.strip() if username is not None else user["username"]
+        if username is not None and len(new_username) < 3:
+            return False, "EL USUARIO DEBE TENER AL MENOS 3 CARACTERES", None
+
+        if username is not None:
+            conflict = self.get_by_username(new_username)
+            if conflict is not None and conflict["id"] != user_id:
+                return False, "EL USUARIO YA EXISTE", None
+
+        if password is not None and len(password) < 4:
+            return False, "LA CONTRASEÑA DEBE TENER AL MENOS 4 CARACTERES", None
+
+        user["username"] = new_username
+        if password is not None:
+            user["password_hash"] = self._hash_password(password)
+        if role is not None:
+            user["role"] = role
+        if active is not None:
+            user["active"] = bool(active)
+        user["updated_at"] = self._timestamp()
+
+        self.save()
+        return True, "USUARIO ACTUALIZADO", dict(user)
+
+    def promote_to_admin(self, user_id: int) -> tuple[bool, str, UserRecord | None]:
+        return self.update_user(user_id, role="admin")
+
     def authenticate(self, username: str, password: str) -> UserRecord | None:
         user = self.get_by_username(username)
         if user is None or not user["active"]:

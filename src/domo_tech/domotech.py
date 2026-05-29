@@ -8,6 +8,7 @@ from textual.app import App
 from domo_tech.inventory import InventoryStore
 from domo_tech.tracing import TraceStore
 from domo_tech.users import UserStore
+from domo_tech.ui.screens.admin_screen import AdminScreen
 from domo_tech.ui.screens.login import LoginScreen
 from domo_tech.ui.screens.store_screen import StoreScreen
 from domo_tech.ui.styles import CYBER_STORE_CSS
@@ -34,6 +35,17 @@ class DomoTechStore(App[None]):
         self.users = UserStore()
 
     def _show_store(self) -> None:
+        current_role = str(getattr(self, "current_user_role", "") or "")
+        if current_role == "admin":
+            self.push_screen(
+                AdminScreen(
+                    users_store=self.users,
+                    inventory_store=self.inventory,
+                    trace_store=self.trace,
+                )
+            )
+            return
+
         self.push_screen(
             StoreScreen(
                 self.inventory.list_products(),

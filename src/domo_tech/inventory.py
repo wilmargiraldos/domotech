@@ -256,6 +256,53 @@ class InventoryStore:
     def list_products(self) -> list[ProductRecord]:
         return [dict(product) for product in self._products]
 
+    def get_by_id(self, product_id: int) -> ProductRecord | None:
+        for product in self._products:
+            if product["id"] == product_id:
+                return product
+        return None
+
+    def update_product(
+        self,
+        product_id: int,
+        *,
+        name: str | None = None,
+        price: float | None = None,
+        cat: str | None = None,
+        stock: int | None = None,
+        description: str | None = None,
+        features: list[str] | None = None,
+        specs: dict[str, str] | None = None,
+    ) -> tuple[bool, str, ProductRecord | None]:
+        product = self.get_by_id(product_id)
+        if product is None:
+            return False, "PRODUCTO NO ENCONTRADO", None
+
+        if name is not None:
+            clean_name = name.strip()
+            if not clean_name:
+                return False, "EL NOMBRE NO PUEDE ESTAR VACÍO", None
+            product["name"] = clean_name
+        if price is not None:
+            if price < 0:
+                return False, "EL PRECIO NO PUEDE SER NEGATIVO", None
+            product["price"] = float(price)
+        if cat is not None:
+            product["cat"] = cat.strip() or product["cat"]
+        if stock is not None:
+            if stock < 0:
+                return False, "EL STOCK NO PUEDE SER NEGATIVO", None
+            product["stock"] = int(stock)
+        if description is not None:
+            product["description"] = description.strip()
+        if features is not None:
+            product["features"] = [feature.strip() for feature in features if feature.strip()]
+        if specs is not None:
+            product["specs"] = {str(key).strip(): str(value).strip() for key, value in specs.items() if str(key).strip()}
+
+        self.save()
+        return True, "PRODUCTO ACTUALIZADO", dict(product)
+
     def purchase(self, items: dict[int, int]) -> tuple[bool, str]:
         products_by_id = {product["id"]: product for product in self._products}
 

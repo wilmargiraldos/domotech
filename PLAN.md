@@ -12,16 +12,16 @@
 - ✅ Adición de la ventana de detalles.
 - ✅ Sistema básico de ayuda.
 - ✅ Incorporación de trazabilidad.
+- ✅ Corregir las dimensiones de la ventana de login, para que quepa en la ventana maximizada.
 
 ## Pendientes / En progreso
 
 - 🚧 Implementar el sistema de enrolamiento de nuevos usuarios / desacople con los usuarios quemados en código.
-- ⏳ Corregir las dimensiones de la ventana de login, para que quepa en la ventana maximizada.
 - ⏳ Corregir el contador de items, separarlo un poco mas del icono asociado.
 - ⏳ Validar si el comportamiento de "Vaciar el carrito de compras" restaura las cantidades disponibles en Stock (Posible bug).
 - ⏳ Mejorar un poco el aspecto visual del foco, a veces el énfasis es muy sutil y se dificulta saber que parte de la TUI tiene foco.
 - ⏳ Adicionar ventana que devuelva las estadisticas de usuario.
-- ⏳ Adicionar la ventana para administradores.
+- 🚧 Adicionar la ventana para administradores.
 - ⏳ Revisar el sistema de ayuda, completar lo que haga falta.
 - ⏳ Revisar los bindings de las teclas, proponer que sean teclas combinadas para que no colisionen con el buscador de items.
 - ⏳ Limpiar el código, limpiar las hojas de estilo.
