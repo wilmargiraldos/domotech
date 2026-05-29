@@ -2,19 +2,13 @@
 DOMO - TECH — Tienda virtual de componentes electrónicos
 Modo TUI
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Instalar:  pip install textual
-Ejecutar:  python domotech.py
-
-Usuarios de prueba:
-  admin / 1234
-  cyber / punk
-  user  / pass
 """
 
 from textual.app import App
 from domo_tech.inventory import InventoryStore
 from domo_tech.tracing import TraceStore
-from domo_tech.ui.screens.login import LoginScreen, DEFAULT_USERS
+from domo_tech.users import UserStore
+from domo_tech.ui.screens.login import LoginScreen
 from domo_tech.ui.screens.store_screen import StoreScreen
 from domo_tech.ui.styles import CYBER_STORE_CSS
 
@@ -30,11 +24,14 @@ class DomoTechStore(App[None]):
     TITLE = "DOMO-TECH"
 
     current_user: str = ""
+    current_user_id: int | None = None
+    current_user_role: str = ""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.inventory = InventoryStore()
         self.trace = TraceStore()
+        self.users = UserStore()
 
     def _show_store(self) -> None:
         self.push_screen(
@@ -49,7 +46,7 @@ class DomoTechStore(App[None]):
         self.push_screen(
             LoginScreen(
                 on_login_success=self._show_store,
-                users=DEFAULT_USERS,
+                user_store=self.users,
                 use_wide_banner=USE_WIDE_LOGIN_BANNER,
             )
         )

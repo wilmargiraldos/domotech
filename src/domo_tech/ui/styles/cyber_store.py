@@ -16,7 +16,7 @@ LoginScreen {
     height: auto;
     border: heavy #ff00ff;
     background: #0a0a1f;
-    padding: 2 3;
+    padding: 1 3;
 }
 
 .login-box-wide {
@@ -56,16 +56,29 @@ Input:focus {
 }
 
 #btn-login {
-    margin-top: 2;
+    margin-top: 0;
     background: #ff00ff 20%;
     color: #ff00ff;
     border: tall #ff00ff;
-    width: 100%;
+    width: 1fr;
     text-style: bold;
 }
 
 #btn-login:hover {
     background: #ff00ff 40%;
+    color: #ffffff;
+}
+
+#btn-register {
+    margin-top: 0;
+    background: #00ffff 10%;
+    color: #00ffff;
+    border: tall #00ffff 60%;
+    width: 1fr;
+}
+
+#btn-register:hover {
+    background: #00ffff 30%;
     color: #ffffff;
 }
 
@@ -76,9 +89,80 @@ Input:focus {
     margin-top: 1;
 }
 
+#login-actions {
+    margin-top: 2;
+    height: auto;
+}
+
+#login-actions Button {
+    height: 3;
+}
+
+#btn-login {
+    margin-right: 1;
+}
+
+#btn-register {
+    margin-left: 1;
+}
+
 #login-footer-text {
     color: #2a2a44;
     text-align: center;
+    margin-top: 1;
+}
+
+RegisterModal {
+    align: center middle;
+    background: #000008 80%;
+}
+
+#register-box {
+    width: 58;
+    height: auto;
+    border: heavy #00ffff;
+    background: #0a0a1f;
+    padding: 2 3;
+}
+
+#register-title {
+    color: #00ffff;
+    text-align: center;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#btn-register-confirm {
+    margin-top: 2;
+    background: #00ff88 15%;
+    color: #00ff88;
+    border: tall #00ff88;
+    width: 100%;
+    text-style: bold;
+}
+
+#btn-register-confirm:hover {
+    background: #00ff88 35%;
+    color: #ffffff;
+}
+
+#btn-register-cancel {
+    margin-top: 1;
+    background: #333344;
+    color: #888899;
+    border: tall #444455;
+    width: 100%;
+}
+
+#btn-register-cancel:hover {
+    background: #444455;
+    color: #ffffff;
+}
+
+#register-error {
+    color: #ffaa00;
+    text-align: center;
+    height: 1;
     margin-top: 1;
 }
 

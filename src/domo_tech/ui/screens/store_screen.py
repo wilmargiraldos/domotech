@@ -42,7 +42,13 @@ class InventoryProvider(Protocol):
 
 
 class TraceProvider(Protocol):
-    def record_sale(self, username: str, cart_entries: list[dict[str, Any]]) -> dict[str, Any]:
+    def record_sale(
+        self,
+        username: str,
+        cart_entries: list[dict[str, Any]],
+        user_id: int | None = None,
+        user_role: str = "client",
+    ) -> dict[str, Any]:
         ...
 
     def record_event(self, event_type: str, **details: Any) -> dict[str, Any]:
@@ -264,6 +270,8 @@ class StoreScreen(Screen[None]):
         self.cart = {}
         self._refresh_cart_ui()
         app.current_user = ""
+        app.current_user_id = None
+        app.current_user_role = ""
         login_screen = app.screen_stack[-2] if len(app.screen_stack) >= 2 else None
         if isinstance(login_screen, LoginScreen):
             login_screen.clear_form()
@@ -322,17 +330,25 @@ class StoreScreen(Screen[None]):
     def _record_sale(self) -> dict[str, Any]:
         app = cast(Any, self.app)
         username = str(getattr(app, "current_user", ""))
+        user_id = getattr(app, "current_user_id", None)
+        user_role = str(getattr(app, "current_user_role", "client") or "client")
         entries = [{"product": entry["product"], "qty": entry["qty"]} for entry in self.cart.values()]
         if self._trace_store is not None:
-            return self._trace_store.record_sale(username, entries)
+            return self._trace_store.record_sale(username, entries, user_id=user_id, user_role=user_role)
         return {"order_id": f"DTWG-{datetime.now().strftime('%H%M%S')}"}
 
     def _record_event(self, event_type: str, **details: Any) -> None:
         if self._trace_store is not None:
             app = cast(Any, self.app)
             username = str(getattr(app, "current_user", ""))
+            user_id = getattr(app, "current_user_id", None)
+            user_role = str(getattr(app, "current_user_role", "") or "")
+            if user_id is not None and "user_id" not in details:
+                details["user_id"] = user_id
             if username and "username" not in details:
                 details["username"] = username
+            if user_role and "user_role" not in details:
+                details["user_role"] = user_role
             self._trace_store.record_event(event_type, **details)
 
     def _clear_product_filter(self) -> None:
