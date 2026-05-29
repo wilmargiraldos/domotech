@@ -7,11 +7,11 @@ from collections import Counter, defaultdict
 from datetime import datetime
 from typing import Any, Protocol, cast
 
-from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Container, Horizontal, ScrollableContainer, Vertical
+from textual.containers import Container, Horizontal, ScrollableContainer
 from textual.screen import Screen
+from textual.widget import Widget
 from textual.widgets import Button, DataTable, Input, Static
 
 
@@ -94,12 +94,14 @@ class AdminScreen(Screen[None]):
         self._events: list[dict[str, Any]] = []
         self._selected_user_id: int | None = None
         self._selected_product_id: int | None = None
+        self._last_users_cursor = -1
+        self._last_products_cursor = -1
 
     def compose(self) -> ComposeResult:
         with Container(id="admin-shell"):
             with Horizontal(id="admin-header"):
                 yield Static("◈  PANEL ADMINISTRATIVO  ◈", id="admin-title", markup=False)
-                yield Static("ADMIN", id="admin-user", markup=False)
+                yield Static("", id="admin-user", markup=False)
 
             with Horizontal(id="admin-nav"):
                 yield Button("RESUMEN", id="admin-tab-overview")
@@ -114,20 +116,34 @@ class AdminScreen(Screen[None]):
                 yield Static("", id="admin-kpi-sales")
                 yield Static("", id="admin-kpi-events")
 
-            yield Static("", id="admin-status")
+            with Container(id="admin-main"):
+                yield Static("", id="admin-status")
 
-            with ScrollableContainer(id="admin-content"):
-                yield from self._compose_overview_section()
-                yield from self._compose_users_section()
-                yield from self._compose_products_section()
-                yield from self._compose_sales_section()
-                yield from self._compose_logs_section()
+                with Container(id="admin-content"):
+                    yield from self._compose_overview_section()
+                    yield from self._compose_users_section()
+                    yield from self._compose_products_section()
+                    yield from self._compose_sales_section()
+                    yield from self._compose_logs_section()
+
+            with Horizontal(id="admin-status-bar"):
+                yield Static(
+                    "BINDS: [Q/ESC] SALIR  [R] REFRESCAR  [↑↓] MOVERSE EN TABLAS  [TAB] NAVEGAR CONTROLES",
+                    id="admin-help-text",
+                    markup=False,
+                )
+                yield Static("", id="admin-op-status", markup=False)
+                yield Static("", id="admin-clock", markup=False)
 
     def on_mount(self) -> None:
         self.refresh_data()
+        self.set_interval(1, self._tick)
+        self.set_interval(0.2, self._sync_selection_with_tables)
+        self._set_status("TIP: USA ↑↓ EN TABLAS PARA ACTUALIZAR FORMULARIOS")
 
     def action_refresh_data(self) -> None:
         self.refresh_data()
+        self._set_status("✓  DATOS ACTUALIZADOS")
 
     def action_logout(self) -> None:
         app = cast(Any, self.app)
@@ -171,10 +187,11 @@ class AdminScreen(Screen[None]):
             self.refresh_data()
 
     def refresh_data(self) -> None:
+        self._update_header_user()
         self._users = self._users_store.list_users()
         self._products = self._inventory_store.list_products()
-        self._sales = self._trace_store.list_sales() if self._trace_store is not None else []
-        self._events = self._trace_store.list_events() if self._trace_store is not None else []
+        self._sales = self._trace_store.list_sales()
+        self._events = self._trace_store.list_events()
         self._update_kpis()
         self._render_overview_section()
         self._render_users_section()
@@ -187,9 +204,15 @@ class AdminScreen(Screen[None]):
         self.section = section
         self._set_section_visibility(section)
         if section == "users":
+            self._selected_user_id = None
+            self._last_users_cursor = -1
             self._load_selected_user_form()
+            self._set_status("TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE")
         elif section == "products":
+            self._selected_product_id = None
+            self._last_products_cursor = -1
             self._load_selected_product_form()
+            self._set_status("TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE")
         elif section == "overview":
             self._render_overview_section()
         elif section == "sales":
@@ -197,11 +220,50 @@ class AdminScreen(Screen[None]):
         elif section == "logs":
             self._render_logs_section()
 
+    def _update_header_user(self) -> None:
+        app = cast(Any, self.app)
+        username = str(getattr(app, "current_user", ""))
+        role = str(getattr(app, "current_user_role", "admin") or "admin")
+        badge = f"{role.upper()} :: {username}" if username else role.upper()
+        self.query_one("#admin-user", Static).update(badge)
+
+    def _tick(self) -> None:
+        now = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S")
+        clock = self.query_one_optional("#admin-clock", Static)
+        if clock is not None:
+            clock.update(now)
+
+    def _sync_selection_with_tables(self) -> None:
+        if self.section == "users":
+            users_table = self.query_one_optional("#admin-users-table", DataTable)
+            if users_table is None:
+                return
+            try:
+                row = int(users_table.cursor_row)
+            except Exception:
+                return
+            if row != self._last_users_cursor and 0 <= row < len(self._users):
+                self._last_users_cursor = row
+                self._selected_user_id = int(self._users[row]["id"])
+                self._load_selected_user_form()
+        elif self.section == "products":
+            products_table = self.query_one_optional("#admin-products-table", DataTable)
+            if products_table is None:
+                return
+            try:
+                row = int(products_table.cursor_row)
+            except Exception:
+                return
+            if row != self._last_products_cursor and 0 <= row < len(self._products):
+                self._last_products_cursor = row
+                self._selected_product_id = int(self._products[row]["id"])
+                self._load_selected_product_form()
+
     def _update_kpis(self) -> None:
         total_users = len(self._users)
         admin_count = sum(1 for user in self._users if str(user.get("role", "client")) == "admin")
         low_stock = sum(1 for product in self._products if int(product.get("stock", 0)) <= 8)
-        summary = self._trace_store.sales_summary() if self._trace_store is not None else {"sales_count": 0, "total_revenue": 0, "total_items": 0}
+        summary = self._trace_store.sales_summary()
 
         self.query_one("#admin-kpi-users", Static).update(f"USUARIOS\n{total_users} total // {admin_count} admins")
         self.query_one("#admin-kpi-products", Static).update(f"INVENTARIO\n{len(self._products)} productos // {low_stock} bajo stock")
@@ -218,7 +280,7 @@ class AdminScreen(Screen[None]):
             "#admin-sales-section",
             "#admin-logs-section",
         ):
-            widget = self.query_one(section_id, Container)
+            widget = self.query_one(section_id, Widget)
             widget.display = False
 
         visible_map = {
@@ -228,7 +290,7 @@ class AdminScreen(Screen[None]):
             "sales": "#admin-sales-section",
             "logs": "#admin-logs-section",
         }
-        self.query_one(visible_map.get(section, "#admin-overview-section"), Container).display = True
+        self.query_one(visible_map.get(section, "#admin-overview-section"), Widget).display = True
         self._sync_nav_status(section)
 
     def _sync_nav_status(self, section: str) -> None:
@@ -242,7 +304,7 @@ class AdminScreen(Screen[None]):
         self.query_one("#admin-status", Static).update(f"SECCIÓN ACTIVA // {labels.get(section, 'RESUMEN')}")
 
     def _compose_overview_section(self) -> ComposeResult:
-        with Container(id="admin-overview-section"):
+        with ScrollableContainer(id="admin-overview-section"):
             yield Static("", id="admin-overview-text", markup=False)
             yield Static("", id="admin-sales-chart", markup=False)
             yield Static("", id="admin-top-products-chart", markup=False)
@@ -267,15 +329,16 @@ class AdminScreen(Screen[None]):
         self.query_one("#admin-low-stock", Static).update(self._build_low_stock_lines())
 
     def _compose_users_section(self) -> ComposeResult:
-        with Container(id="admin-users-section"):
+        with ScrollableContainer(id="admin-users-section"):
             with Horizontal(id="admin-users-layout"):
                 with Container(id="admin-users-table-box"):
                     yield Static("USUARIOS REGISTRADOS", classes="admin-section-title")
+                    yield Static("Mueve el cursor con ↑↓ para cargar datos en el formulario.", id="admin-users-hint", markup=False)
                     yield DataTable(id="admin-users-table", cursor_type="row")
                     yield Button("CARGAR SELECCIÓN", id="admin-users-load")
                     yield Button("REFRESCAR", id="admin-users-refresh")
 
-                with Container(id="admin-user-editor"):
+                with ScrollableContainer(id="admin-user-editor"):
                     yield Static("EDITAR USUARIO", classes="admin-section-title")
                     yield Static("Usuario", classes="admin-field-label")
                     yield Input(id="admin-user-username")
@@ -289,21 +352,20 @@ class AdminScreen(Screen[None]):
                     yield Button("TOGGLE ACTIVO", id="admin-users-toggle")
 
     def _render_users_section(self) -> None:
-        low_stock_lines = self._build_low_stock_lines()
         self._populate_users_table()
-        self._populate_products_table()
         self._load_selected_user_form()
 
     def _compose_products_section(self) -> ComposeResult:
-        with Container(id="admin-products-section"):
+        with ScrollableContainer(id="admin-products-section"):
             with Horizontal(id="admin-products-layout"):
                 with Container(id="admin-products-table-box"):
                     yield Static("PRODUCTOS", classes="admin-section-title")
+                    yield Static("Mueve el cursor con ↑↓ para cargar datos en el formulario.", id="admin-products-hint", markup=False)
                     yield DataTable(id="admin-products-table", cursor_type="row")
                     yield Button("CARGAR SELECCIÓN", id="admin-products-load")
                     yield Button("REFRESCAR", id="admin-products-refresh")
 
-                with Container(id="admin-product-editor"):
+                with ScrollableContainer(id="admin-product-editor"):
                     yield Static("EDITAR PRODUCTO", classes="admin-section-title")
                     yield Static("Nombre", classes="admin-field-label")
                     yield Input(id="admin-product-name")
@@ -326,7 +388,7 @@ class AdminScreen(Screen[None]):
         self._load_selected_product_form()
 
     def _compose_sales_section(self) -> ComposeResult:
-        with Container(id="admin-sales-section"):
+        with ScrollableContainer(id="admin-sales-section"):
             yield Static("", id="admin-sales-overview", markup=False)
             yield Static("", id="admin-order-status-chart", markup=False)
             yield Static("", id="admin-revenue-chart", markup=False)
@@ -341,7 +403,7 @@ class AdminScreen(Screen[None]):
         )
 
     def _compose_logs_section(self) -> ComposeResult:
-        with Container(id="admin-logs-section"):
+        with ScrollableContainer(id="admin-logs-section"):
             yield Static("LOGS OPERATIVOS", classes="admin-section-title")
             with ScrollableContainer(id="admin-log-scroll"):
                 pass
@@ -605,7 +667,7 @@ class AdminScreen(Screen[None]):
         )
 
     def _build_sales_overview_text(self) -> str:
-        summary = self._trace_store.sales_summary() if self._trace_store is not None else {"sales_count": 0, "total_revenue": 0, "total_items": 0}
+        summary = self._trace_store.sales_summary()
         return (
             "VENTAS Y RESUMEN\n"
             f"Órdenes completadas: {summary['sales_count']}\n"
@@ -679,4 +741,4 @@ class AdminScreen(Screen[None]):
         return "\n".join(lines)
 
     def _set_status(self, message: str) -> None:
-        self.query_one("#admin-status", Static).update(message)
+        self.query_one("#admin-op-status", Static).update(message)

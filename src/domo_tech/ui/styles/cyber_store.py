@@ -114,20 +114,21 @@ Input:focus {
 
 /* ════════════ ADMIN ════════════ */
 AdminScreen {
-    align: center top;
+    align: left top;
     background: #05050f;
 }
 
 #admin-shell {
+    width: 100%;
     height: 100%;
-    padding: 1 2;
+    padding: 0 1;
 }
 
 #admin-header {
-    height: 2;
+    height: 1;
     background: #0a0a1f;
     border-bottom: heavy #00ffff;
-    padding: 0 2;
+    padding: 0 1;
     align: left middle;
 }
 
@@ -135,15 +136,19 @@ AdminScreen {
     color: #00ffff;
     text-style: bold;
     width: 1fr;
+    min-width: 0;
 }
 
 #admin-user {
     color: #ff00ff;
-    text-align: right;
+    width: auto;
+    min-width: 22;
+    content-align: right middle;
 }
 
 #admin-nav {
-    margin-top: 1;
+    height: 3;
+    margin-top: 0;
 }
 
 #admin-nav Button {
@@ -156,13 +161,14 @@ AdminScreen {
 }
 
 #admin-kpis {
-    margin-top: 1;
+    height: 4;
+    margin-top: 0;
 }
 
 #admin-kpis Static {
     width: 1fr;
     margin-right: 1;
-    padding: 1 2;
+    padding: 0 1;
     border: solid #1a1a3a;
     background: #0a0a1f;
     color: #cccccc;
@@ -173,18 +179,63 @@ AdminScreen {
 }
 
 #admin-status {
-    margin-top: 1;
+    margin-top: 0;
     color: #00ff88;
     text-align: center;
+    height: 1;
 }
 
 #admin-content {
     height: 1fr;
     min-height: 0;
-    margin-top: 1;
-    padding: 1 2;
+    margin-top: 0;
+    padding: 0 1;
     background: #0a0a1f;
     border: heavy #1a1a3a;
+}
+
+#admin-main {
+    height: 1fr;
+    min-height: 0;
+}
+
+#admin-overview-section,
+#admin-users-section,
+#admin-products-section,
+#admin-sales-section,
+#admin-logs-section {
+    height: 1fr;
+    min-height: 0;
+    padding: 0 1;
+}
+
+#admin-status-bar {
+    margin-top: 0;
+    height: 2;
+    padding: 0 1;
+    align: left middle;
+    border-top: solid #00ffff 25%;
+    background: #05050f;
+}
+
+#admin-help-text {
+    color: #666688;
+    width: 3fr;
+    min-width: 0;
+}
+
+#admin-op-status {
+    color: #00ff88;
+    width: 2fr;
+    min-width: 0;
+    content-align: center middle;
+}
+
+#admin-clock {
+    color: #00ffff;
+    width: auto;
+    min-width: 20;
+    content-align: right middle;
 }
 
 .admin-section-title {
@@ -202,6 +253,7 @@ AdminScreen {
 #admin-users-layout,
 #admin-products-layout {
     height: auto;
+    min-height: 0;
 }
 
 #admin-users-table-box,
@@ -220,7 +272,13 @@ AdminScreen {
 
 #admin-users-table,
 #admin-products-table {
-    height: 18;
+    height: 14;
+    margin-bottom: 1;
+}
+
+#admin-users-hint,
+#admin-products-hint {
+    color: #888899;
     margin-bottom: 1;
 }
 
@@ -245,7 +303,7 @@ AdminScreen {
 #admin-events-chart,
 #admin-order-status-chart,
 #admin-revenue-chart {
-    margin-top: 1;
+    margin-top: 0;
     color: #cccccc;
     background: #05050f;
     border: solid #1a1a2e;
@@ -253,8 +311,8 @@ AdminScreen {
 }
 
 #admin-log-scroll {
-    height: 1fr;
-    min-height: 20;
+    height: auto;
+    min-height: 10;
     background: #05050f;
     border: solid #1a1a2e;
     padding: 1 2;
