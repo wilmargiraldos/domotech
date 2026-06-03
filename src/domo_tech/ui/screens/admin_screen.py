@@ -91,6 +91,8 @@ class AdminScreen(Screen[None]):
         self._selected_product_id: int | None = None
         self._last_users_cursor = -1
         self._last_products_cursor = -1
+        self._status_message = ""
+        self._status_offset = 0
 
     def compose(self) -> ComposeResult:
         with Container(id="admin-shell"):
@@ -135,6 +137,7 @@ class AdminScreen(Screen[None]):
     def on_mount(self) -> None:
         self.refresh_data()
         self.set_interval(1, self._tick)
+        self.set_interval(0.15, self._scroll_status)
         self.set_interval(0.2, self._sync_selection_with_tables)
         self._set_status("TIP: USA ↑↓ EN TABLAS PARA ACTUALIZAR FORMULARIOS")
 
@@ -233,6 +236,9 @@ class AdminScreen(Screen[None]):
         clock = self.query_one_optional("#admin-clock", Static)
         if clock is not None:
             clock.update(now)
+
+    def _scroll_status(self) -> None:
+        self._render_status_message()
 
     def _sync_selection_with_tables(self) -> None:
         if self.section == "users":
@@ -838,4 +844,35 @@ class AdminScreen(Screen[None]):
         return "\n".join(lines)
 
     def _set_status(self, message: str) -> None:
-        self.query_one("#admin-op-status", Static).update(message)
+        self._status_message = message.strip()
+        self._status_offset = 0
+        self._render_status_message()
+
+    def _render_status_message(self) -> None:
+        status = self.query_one_optional("#admin-op-status", Static)
+        if status is None:
+            return
+
+        message = self._status_message
+        if not message:
+            status.update("")
+            return
+
+        width = int(getattr(status.size, "width", 0) or 0)
+        if width <= 0:
+            status.update(message)
+            return
+
+        padded = f"{message}   "
+        if len(padded) <= width:
+            status.update(message[:width])
+            return
+
+        offset = self._status_offset % len(padded)
+        marquee = padded + padded
+        rendered = marquee[offset : offset + width]
+        if len(rendered) < width:
+            rendered += marquee[: width - len(rendered)]
+
+        status.update(rendered)
+        self._status_offset = (self._status_offset + 1) % len(padded)

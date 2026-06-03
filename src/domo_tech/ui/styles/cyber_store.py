@@ -229,7 +229,7 @@ AdminScreen {
     color: #00ff88;
     width: 2fr;
     min-width: 0;
-    content-align: center middle;
+    content-align: left middle;
 }
 
 #admin-clock {
