@@ -578,16 +578,20 @@ DataTable > .datatable--hover {
     align: left middle;
     height: 1;
     margin-bottom: 0;
+    width: 100%;
 }
 
 #total-label {
     color: #555577;
-    width: 1fr;
+    width: auto;
+    min-width: 7;
 }
 
 #total-value {
     color: #00ff88;
     text-style: bold;
+    width: 1fr;
+    content-align: right middle;
 }
 
 #btn-checkout {
