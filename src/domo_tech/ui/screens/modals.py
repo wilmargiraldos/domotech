@@ -13,7 +13,6 @@ from textual.binding import Binding
 from textual.screen import ModalScreen
 from textual.widgets import Button, Input, Static
 
-
 HELP_TOPICS = [
     {
         "title": "Navegación general",
@@ -109,7 +108,9 @@ class CheckoutModal(ModalScreen):
                     with Horizontal(classes="checkout-row"):
                         yield Static(p["name"], classes="co-name")
                         yield Static(f"×{entry['qty']}", classes="co-qty")
-                        yield Static(f"${p['price'] * entry['qty']:,.2f}", classes="co-sub")
+                        yield Static(
+                            f"${p['price'] * entry['qty']:,.2f}", classes="co-sub"
+                        )
             with Horizontal(id="checkout-total-row"):
                 yield Static("TOTAL:", id="co-total-label")
                 yield Static(f"${total:,.2f}", id="co-total-val")
@@ -144,18 +145,30 @@ class ProductDetailModal(ModalScreen):
             yield Static("◈  VISTA PREVIA DE PRODUCTO  ◈", id="product-detail-title")
             yield Static(str(product["name"]), id="product-detail-name", markup=False)
             with Horizontal(id="product-detail-meta"):
-                yield Static(f"CATEGORÍA: {product['cat']}", classes="pd-meta", markup=False)
-                yield Static(f"PRECIO: ${product['price']:,.2f}", classes="pd-meta", markup=False)
+                yield Static(
+                    f"CATEGORÍA: {product['cat']}", classes="pd-meta", markup=False
+                )
+                yield Static(
+                    f"PRECIO: ${product['price']:,.2f}", classes="pd-meta", markup=False
+                )
                 yield Static(f"STOCK: {stock_text}", classes="pd-meta", markup=False)
             with ScrollableContainer(id="product-detail-body"):
-                yield Static(str(product.get("description") or "Sin descripción técnica registrada."), id="pd-desc")
+                yield Static(
+                    str(
+                        product.get("description")
+                        or "Sin descripción técnica registrada."
+                    ),
+                    id="pd-desc",
+                )
                 yield Static("CARACTERÍSTICAS", classes="pd-section")
                 for feature in features:
                     yield Static(f"• {feature}", classes="pd-line", markup=False)
                 yield Static("ESPECIFICACIONES", classes="pd-section")
                 if specs:
                     for label, value in specs.items():
-                        yield Static(f"{label}: {value}", classes="pd-line", markup=False)
+                        yield Static(
+                            f"{label}: {value}", classes="pd-line", markup=False
+                        )
                 else:
                     yield Static("Sin especificaciones registradas.", classes="pd-line")
             yield Button("⟫  CERRAR  ⟪", id="btn-detail-close")

@@ -5,12 +5,14 @@ Domo-Tech: Componentes electrónicos para domótica inteligente.
 Especialización: Arduino & Raspberry Pi
 """
 
+import sys
+
 # ============================================================================
 # MAIN LOGO - Compact version (recommended for headers)
 # ============================================================================
 LOGO_DOMO_TECH_COMPACT = """
     ╔═══════════════════════════════╗
-    ║  🏠 DOMO-TECH 🔧  ║
+    ║  🏠 DOMO-TECH 🔧              ║
     ║  Smart Home Components        ║
     ║  Arduino • Raspberry • IoT    ║
     ╚═══════════════════════════════╝
@@ -22,19 +24,19 @@ LOGO_DOMO_TECH_COMPACT = """
 LOGO_DOMO_TECH_FULL = """
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
-║          ██████  ██████  ███    ███ ███████               ║
-║         ██    ████    ████ ████ ████ ██                   ║
-║         ██    ████    █████ ██████  █████                ║
-║         ██    ████    ██████  ██  ██ ██                   ║
-║          ██████  ██████ ██ ██ ██ ███████               ║
+║          ██████  ██████  ███    ███ ███████                ║
+║         ██    ████    ████ ████ ████ ██                    ║
+║         ██    ████    █████ ██████  █████                  ║
+║         ██    ████    ██████  ██  ██ ██                    ║
+║          ██████  ██████ ██ ██ ██ ███████                   ║
 ║                                                            ║
-║              ████████ ███████  ██████ ██   ██            ║
-║                 ██    ██       ██      ██   ██            ║
-║                 ██    █████    ██      ███████            ║
-║                 ██    ██       ██           ██            ║
-║                 ██    ███████  ██████       ██            ║
+║              ████████ ███████  ██████ ██   ██              ║
+║                 ██    ██       ██      ██   ██             ║
+║                 ██    █████    ██      ███████             ║
+║                 ██    ██       ██           ██             ║
+║                 ██    ███████  ██████       ██             ║
 ║                                                            ║
-║  Smart Home • Arduino • Raspberry Pi • IoT Components    ║
+║  Smart Home • Arduino • Raspberry Pi • IoT Components      ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 """
@@ -45,15 +47,15 @@ LOGO_DOMO_TECH_FULL = """
 LOGO_CYBERPUNK_CIRCUIT = """
 ╭─────────────────────────────────────────────────────────────╮
 │                                                             │
-│  ▀▀█▄ ▄█▀  ▄▀▀▀▄  ▄▀▀▄ ▄▀▀▄ █▀▀▀█  ░ ▐█▄█░ ▐▄ ▌  ░      │
-│   ▌ ▄▐▄   ▐▄ ▄▌ ▐▌ ▐▌ ▐  ▌ ░█  █░  ▌  █ █▀▌ ▌█ ▌  ░      │
-│   ▌▐▌ ▌    ▀▀  ▀▀▀▀▀ ▀▀▀▀  ░█▄▄█░  ░  █ █ ▌ ▌▌▐▌  ░      │
-│                          ░         ░                       │
-│  ╔═══════════════════════════════════════════════════╗     │
-│  ║ ◇─────────────────────────────────────────────◇ ║     │
-│  ║ │ Arduino │ Raspberry Pi │ Sensores │ Relés  │ ║     │
-│  ║ ◇─────────────────────────────────────────────◇ ║     │
-│  ╚═══════════════════════════════════════════════════╝     │
+│  ▀▀█▄ ▄█▀  ▄▀▀▀▄  ▄▀▀▄ ▄▀▀▄ █▀▀▀█  ░ ▐█▄█░ ▐▄ ▌  ░          │
+│   ▌ ▄▐▄   ▐▄ ▄▌ ▐▌ ▐▌ ▐  ▌ ░█  █░  ▌  █ █▀▌ ▌█ ▌  ░         │
+│   ▌▐▌ ▌    ▀▀  ▀▀▀▀▀ ▀▀▀▀  ░█▄▄█░  ░  █ █ ▌ ▌▌▐▌  ░         │
+│                          ░         ░                        │
+│  ╔═══════════════════════════════════════════════════╗      │
+│  ║ ◇─────────────────────────────────────────────◇   ║      │
+│  ║ │ Arduino │ Raspberry Pi │ Sensores │ Relés  │    ║      │
+│  ║ ◇─────────────────────────────────────────────◇   ║      │
+│  ╚═══════════════════════════════════════════════════╝      │
 │                                                             │
 ╰─────────────────────────────────────────────────────────────╯
 """
@@ -63,7 +65,7 @@ LOGO_CYBERPUNK_CIRCUIT = """
 # ============================================================================
 LOGO_MINIMALIST = """
 ╔═══════════════════════════════════╗
-║   ⚙ DOMO-TECH ⚡                 ║
+║   ⚙ DOMO-TECH ⚡                  ║
 ║   IoT • Smart Home • Componentes  ║
 ╚═══════════════════════════════════╝
 """
@@ -72,16 +74,16 @@ LOGO_MINIMALIST = """
 # ELECTRONIC COMPONENTS BANNER
 # ============================================================================
 BANNER_COMPONENTS = """
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│   [○═◇ ARDUINO ◇═○]  [●─◆ RASPBERRY PI ◆─●]             │
-│                                                             │
-│   🔌 Sensores    |  ⚙️  Relés    |  📡 Módulos Inalámbricos │
-│   🔋 Fuentes    |  🌡️  Medidores | 💾 EEPROM & Memoria    │
-│                                                             │
-│          ★ Soluciones de Domótica Inteligente ★            │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                                                              │
+│   [○═◇ ARDUINO ◇═○]  [●─◆ RASPBERRY PI ◆─●]                  │
+│                                                              │
+│   🔌 Sensores    |  ⚙️  Relés    |  📡 Módulos Inalámbricos  │
+│   🔋 Fuentes    |  🌡️  Medidores | 💾 EEPROM & Memoria       │
+│                                                              │
+│          ★ Soluciones de Domótica Inteligente ★              │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
 """
 
 # ============================================================================
@@ -92,10 +94,10 @@ LOGO_DOMOTECH = """
 │                                    │
 │     ╔════════════════════════╗     │
 │     ║  ▓▓▓▓▓ DomoTech ▓▓▓▓▓  ║     │
-│     ║  Smart Home Solutions   ║     │
+│     ║  Smart Home Solutions  ║     │
 │     ╚════════════════════════╝     │
 │                                    │
-│        🏠 ⚡ 🔌 🤖 📡             │
+│        🏠 ⚡ 🔌 🤖 📡              │
 │                                    │
 ╰────────────────────────────────────╯
 """
@@ -114,19 +116,19 @@ SPLASH_WELCOME = r"""
 █   ╚═════╝  ╚═════╝ ╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝ █
 █                                                                          █
 █   ╔═════════════════════════════════════════════════════════════════╗    █
-█   ║  🏠 Smart Home Components & IoT Solutions                       ║   █
+█   ║  🏠 Smart Home Components & IoT Solutions                       ║    █
 █   ║  Especialización: Arduino • Raspberry Pi • Sensors & Actuators  ║    █
 █   ╚═════════════════════════════════════════════════════════════════╝    █
 █                                                                          █
 █   ┌─ Bienvenido al futuro inteligente de tu hogar ────────────────┐      █
 █   │                                                               │      █
-█   │  ⚙️  Microcontroladores y SBCs                                │     █
-█   │  🌡️  Sensores Inteligentes (temperatura, humedad, movimiento) │     █
-█   │  🔌 Módulos de Conectividad (WiFi, Bluetooth, LoRa)           │     █
-█   │  ⚡ Sistemas de Automatización y Control                      │     █
-█   │  💾 Almacenamiento y Procesamiento de Datos                   │     █
-█   │                                                                │     █
-█   └────────────────────────────────────────────────────────────────┘     █
+█   │  ⚙️  Microcontroladores y SBCs                                 │      █
+█   │  🌡️  Sensores Inteligentes (temperatura, humedad, movimiento)  │      █
+█   │  🔌 Módulos de Conectividad (WiFi, Bluetooth, LoRa)           │      █
+█   │  ⚡ Sistemas de Automatización y Control                      │      █
+█   │  💾 Almacenamiento y Procesamiento de Datos                   │      █
+█   │                                                               │      █
+█   └───────────────────────────────────────────────────────────────┘      █
 █                                                                          █
 ████████████████████████████████████████████████████████████████████████████
 """
@@ -134,40 +136,42 @@ SPLASH_WELCOME = r"""
 # ============================================================================
 # COMPACT STORE HEADER (best for TUI integration)
 # ============================================================================
-HEADER_STORE = """╔════════════════════════════════════════════════════╗
-║                                                ║
-║         🏠 DomoTech - Smart Home Store 🔌     ║
-║                                                ║
-║     Arduino • Raspberry Pi • IoT Componentes   ║
-║                                                ║
-╚════════════════════════════════════════════════╝"""
+HEADER_STORE = """
+╔════════════════════════════════════════════════════╗
+║                                                    ║
+║         🏠 DomoTech - Smart Home Store 🔌          ║
+║                                                    ║
+║     Arduino • Raspberry Pi • IoT Componentes       ║
+║                                                    ║
+╚════════════════════════════════════════════════════╝
+"""
 
 # ============================================================================
 # PRODUCT CATEGORY HEADERS
 # ============================================================================
 CATEGORY_ARDUINO = """
 ╭─ Arduino Boards & Components ────────────────╮
-│  • Arduino Uno/Mega/Nano                      │
-│  • Shields Especializados                     │
-│  • Kits de Desarrollo                         │
-╰───────────────────────────────────────────────╯
+│  • Arduino Uno/Mega/Nano                     │
+│  • Shields Especializados                    │
+│  • Kits de Desarrollo                        │
+╰──────────────────────────────────────────────╯
 """
 
 CATEGORY_RASPBERRY = """
 ╭─ Raspberry Pi & SBCs ────────────────────────╮
-│  • Raspberry Pi 4/5                           │
-│  • Kits de Domótica                           │
-│  • Accesorios y Fuentes                       │
-╰───────────────────────────────────────────────╯
+│  • Raspberry Pi 4/5                          │
+│  • Kits de Domótica                          │
+│  • Accesorios y Fuentes                      │
+╰──────────────────────────────────────────────╯
 """
 
 CATEGORY_SENSORS = """
 ╭─ Sensores Inteligentes ──────────────────────╮
-│  • DHT11/DHT22 (Temperatura & Humedad)        │
-│  • Sensores de Movimiento (PIR)               │
-│  • Sensores de Luz (LDR)                      │
-│  • Sensores de Gases                          │
-╰───────────────────────────────────────────────╯
+│  • DHT11/DHT22 (Temperatura & Humedad)       │
+│  • Sensores de Movimiento (PIR)              │
+│  • Sensores de Luz (LDR)                     │
+│  • Sensores de Gases                         │
+╰──────────────────────────────────────────────╯
 """
 
 CATEGORY_ACTUATORS = """
@@ -185,7 +189,7 @@ CATEGORY_CONNECTIVITY = """
 │  • Bluetooth (HC-05, HM-10)                   │
 │  • LoRa & NB-IoT                              │
 │  • MQTT Brokers                               │
-╰────────────────────────────────────────────────╯
+╰───────────────────────────────────────────────╯
 """
 
 # ============================================================================
@@ -196,10 +200,10 @@ BANNER_PROMO = """
 ║                                                           ║
 ║              ⚡ SPECIAL OFFER ⚡                          ║
 ║                                                           ║
-║   Arduino Starter Kits: 25% OFF                          ║
-║   Raspberry Pi 5 Bundles: FREE Shipping                  ║
+║   Arduino Starter Kits: 25% OFF                           ║
+║   Raspberry Pi 5 Bundles: FREE Shipping                   ║
 ║                                                           ║
-║         Domótica Inteligente para Todos                  ║
+║         Domótica Inteligente para Todos                   ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
 """
@@ -208,8 +212,8 @@ BANNER_TECH_STACK = """
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
 ║        Powered by:                                        ║
-║        🔧 SQLAlchemy | 🗄️  SQLite | 📱 Textual TUI      ║
-║        ⚙️  Python 3.11+ | 🎨 Cyberpunk Aesthetics       ║
+║        🔧 SQLAlchemy | 🗄️  SQLite | 📱 Textual TUI         ║
+║        ⚙️  Python 3.11+ | 🎨 Cyberpunk Aesthetics          ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
 """
@@ -231,9 +235,9 @@ BANNER_TWO_ROWS = """
 ║           ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝   ║
 ╚════════════════════════════════════════════╝
 """
-#  Powered by: ⚙️  Python 3.14+                                        
-#  🔧 SQLAlchemy   | 🗄️  SQLite       
-#  📱 Textual TUI  | 🎨 Cyberpunk Aesthetics       
+#  Powered by: ⚙️  Python 3.14+
+#  🔧 SQLAlchemy   | 🗄️  SQLite
+#  📱 Textual TUI  | 🎨 Cyberpunk Aesthetics
 
 # """
 
@@ -272,38 +276,67 @@ SYMBOLS = {
 DEFAULT_LOGO = LOGO_MINIMALIST
 DEFAULT_HEADER = HEADER_STORE
 
-if __name__ == "__main__":
+
+def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     # Display all available logos when run directly
     print("\n" + "=" * 70)
     print("DOMO-TECH: AVAILABLE ASCII ART LOGOS")
     print("=" * 70)
-    
+
     print("\n[1] LOGO_MINIMALIST")
     print(LOGO_MINIMALIST)
-    
+
     print("\n[2] LOGO_DOMO_TECH_COMPACT")
     print(LOGO_DOMO_TECH_COMPACT)
-    
+
     print("\n[3] LOGO_DOMO_TECH_FULL")
     print(LOGO_DOMO_TECH_FULL)
-    
+
     print("\n[4] LOGO_CYBERPUNK_CIRCUIT")
     print(LOGO_CYBERPUNK_CIRCUIT)
-    
+
     print("\n[5] LOGO_DOMOTECH")
     print(LOGO_DOMOTECH)
-    
+
     print("\n[6] BANNER_COMPONENTS")
     print(BANNER_COMPONENTS)
-    
+
     print("\n[7] SPLASH_WELCOME")
     print(SPLASH_WELCOME)
-    
+
     print("\n[8] HEADER_STORE")
     print(HEADER_STORE)
-    
+
     print("\n[9] CATEGORY_ARDUINO")
     print(CATEGORY_ARDUINO)
-    
-    print("\n[10] CATEGORY_SENSORS")
+
+    print("\n[10] CATEGORY_RASPBERRY")
+    print(CATEGORY_RASPBERRY)
+
+    print("\n[11] CATEGORY_SENSORS")
     print(CATEGORY_SENSORS)
+
+    print("\n[12] CATEGORY_ACTUATORS")
+    print(CATEGORY_ACTUATORS)
+
+    print("\n[13] CATEGORY_CONNECTIVITY")
+    print(CATEGORY_CONNECTIVITY)
+
+    print("\n[14] BANNER_PROMO")
+    print(BANNER_PROMO)
+
+    print("\n[15] BANNER_TECH_STACK")
+    print(BANNER_TECH_STACK)
+
+    print("\n[16] BANNER_ONE_ROW")
+    print(BANNER_ONE_ROW)
+
+    print("\n[17] BANNER_TWO_ROWS")
+    print(BANNER_TWO_ROWS)
+
+
+if __name__ == "__main__":
+    main()

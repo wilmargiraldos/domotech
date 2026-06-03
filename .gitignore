@@ -861,3 +861,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,visualstudiocode,jetbrains,jetbrains+iml,jetbrains+all,intellij,intellij+iml,intellij+all,pycharm,pycharm+iml,pycharm+all,python
+
+# Project specific ignores
+
+unused/

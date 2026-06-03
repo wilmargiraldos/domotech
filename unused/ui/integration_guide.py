@@ -250,36 +250,36 @@ domotech-logo = "domo_tech.ui.logo_demo:main"  # <-- ADD THIS
 # ============================================================================
 INTEGRATION_CHECKLIST = """
 ╔════════════════════════════════════════════════════════════╗
-║           DOMO-TECH LOGO INTEGRATION CHECKLIST            ║
+║           DOMO-TECH LOGO INTEGRATION CHECKLIST             ║
 ╠════════════════════════════════════════════════════════════╣
 ║                                                            ║
 ║  DISPLAY LOGOS:                                            ║
-║  □ Test with: poetry run python -m domo_tech.ui.logo_demo ║
-║  □ Review all available designs                           ║
-║  □ Choose preferred logos for your app                    ║
+║  □ Test with: poetry run python -m domo_tech.ui.logo_demo  ║
+║  □ Review all available designs                            ║
+║  □ Choose preferred logos for your app                     ║
 ║                                                            ║
 ║  IMPORT LOGOS:                                             ║
-║  □ from domo_tech.ui import HEADER_STORE, LOGO_MINIMALIST ║
-║  □ from domo_tech.ui.branding import *                    ║
+║  □ from domo_tech.ui import HEADER_STORE, LOGO_MINIMALIST  ║
+║  □ from domo_tech.ui.branding import *                     ║
 ║                                                            ║
 ║  INTEGRATE TO TUI:                                         ║
-║  □ Add SPLASH_WELCOME to LoginScreen                      ║
-║  □ Add HEADER_STORE to StoreScreen                        ║
-║  □ Create WelcomeScreen with SPLASH_WELCOME               ║
-║  □ Create CategoriesScreen with category logos            ║
-║  □ Update CSS for logo containers                         ║
+║  □ Add SPLASH_WELCOME to LoginScreen                       ║
+║  □ Add HEADER_STORE to StoreScreen                         ║
+║  □ Create WelcomeScreen with SPLASH_WELCOME                ║
+║  □ Create CategoriesScreen with category logos             ║
+║  □ Update CSS for logo containers                          ║
 ║                                                            ║
 ║  TEST & VALIDATE:                                          ║
-║  □ Run cyber-store and check visual appearance            ║
-║  □ Verify logos display correctly in all screens          ║
-║  □ Check alignment and spacing                            ║
-║  □ Test responsiveness on different terminal sizes        ║
+║  □ Run cyber-store and check visual appearance             ║
+║  □ Verify logos display correctly in all screens           ║
+║  □ Check alignment and spacing                             ║
+║  □ Test responsiveness on different terminal sizes         ║
 ║                                                            ║
 ║  OPTIONAL ENHANCEMENTS:                                    ║
-║  □ Add animation to logos (Textual Animation support)     ║
-║  □ Create themed color variants                           ║
-║  □ Add seasonal/promotional logos                         ║
-║  □ Generate custom logos for specific categories          ║
+║  □ Add animation to logos (Textual Animation support)      ║
+║  □ Create themed color variants                            ║
+║  □ Add seasonal/promotional logos                          ║
+║  □ Generate custom logos for specific categories           ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 """

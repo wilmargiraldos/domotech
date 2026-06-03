@@ -9,23 +9,16 @@ readme = "README.md"
 requires-python = ">=3.14,<4.0"
 dependencies = [
     "rich (>=15.0.0,<16.0.0)",
-    "pyfiglet (>=1.0.4,<2.0.0)",
     "textual (>=8.2.5,<9.0.0)",
     "bcrypt (>=4.0.0,<5.0.0)",
-    "alembic (>=1.11.0,<2.0.0)"
 ]
 
 [tool.poetry]
 packages = [{include = "domo_tech", from = "src"}]
 
 [project.scripts]
-simple-store = "domo_tech.simple_store:main"
 domotech = "domo_tech.domotech:main"
-# cyber-store = "domo_tech.cyber_store:main"
-# terminal-nexus = "domo_tech.terminal_nexus:main"
-# prueba = "domo_tech.prueba:main"
-# domotech-logo = "domo_tech.ui.logo_demo:main"
-# domotech-guide = "domo_tech.ui.integration_guide:main"
+branding = "domo_tech.ui.branding:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

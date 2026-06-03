@@ -67,6 +67,7 @@ class AdminScreen(Screen[None]):
 
     BINDINGS = [
         Binding("q", "logout", "Salir"),
+        Binding("Q", "logout", "Salir"),
         Binding("escape", "logout", "Salir"),
         Binding("r", "refresh_data", "Refrescar"),
     ]
@@ -118,7 +119,9 @@ class AdminScreen(Screen[None]):
                 "TIP: USA CTRL + RUEDA DEL MOUSE PARA DESPLAZARTE HORIZONTALMENTE SI ALGUNA LÍNEA SE DESBORDA",
             ],
         }
-        self._section_tip_index: dict[str, int] = {section: 0 for section in self._section_tips}
+        self._section_tip_index: dict[str, int] = {
+            section: 0 for section in self._section_tips
+        }
 
     def compose(self) -> ComposeResult:
         with Container(id="admin-shell"):

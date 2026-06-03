@@ -71,5 +71,6 @@ class DomoTechStore(App[None]):
 def main():
     DomoTechStore().run()
 
+
 if __name__ == "__main__":
     main()

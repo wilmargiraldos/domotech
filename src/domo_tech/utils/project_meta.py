@@ -57,4 +57,3 @@ def _read_project_meta() -> Tuple[str, str]:
 
     # 3) final fallback
     return "DOMO-TECH", "0.0.0"
-

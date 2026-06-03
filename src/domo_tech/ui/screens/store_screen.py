@@ -45,11 +45,9 @@ class CartEntry(TypedDict):
 
 
 class InventoryProvider(Protocol):
-    def list_products(self) -> list[Product]:
-        ...
+    def list_products(self) -> list[Product]: ...
 
-    def purchase(self, items: dict[int, int]) -> tuple[bool, str]:
-        ...
+    def purchase(self, items: dict[int, int]) -> tuple[bool, str]: ...
 
 
 class TraceProvider(Protocol):
@@ -59,11 +57,9 @@ class TraceProvider(Protocol):
         cart_entries: list[dict[str, Any]],
         user_id: int | None = None,
         user_role: str = "client",
-    ) -> dict[str, Any]:
-        ...
+    ) -> dict[str, Any]: ...
 
-    def record_event(self, event_type: str, **details: Any) -> dict[str, Any]:
-        ...
+    def record_event(self, event_type: str, **details: Any) -> dict[str, Any]: ...
 class StoreScreen(Screen[None]):
     """Pantalla principal de la tienda."""
 
@@ -106,7 +102,11 @@ class StoreScreen(Screen[None]):
                 expand=True,
                 markup=False,
             )
-            yield Static(f"[ {current_user.upper()}@SOFTEDGE-LABS ]", id="user-badge", markup=False)
+            yield Static(
+                f"[ {current_user.upper()}@SOFTEDGE-LABS ]",
+                id="user-badge",
+                markup=False,
+            )
 
         with Horizontal(id="main-area"):
             with Vertical(id="products-panel"):
@@ -180,7 +180,9 @@ class StoreScreen(Screen[None]):
             return
 
         total = self.query_one("#products-table", DataTable).row_count
-        self.status_msg = f"FILTRO: {event.value} // {total} RESULTADO{'S' if total != 1 else ''}"
+        self.status_msg = (
+            f"FILTRO: {event.value} // {total} RESULTADO{'S' if total != 1 else ''}"
+        )
 
     def _apply_product_filter(self, query: str | None = None) -> None:
         if query is None:
@@ -212,12 +214,18 @@ class StoreScreen(Screen[None]):
             return
         if product["stock"] <= 0:
             self.status_msg = f"✗  SIN STOCK: {product['name']}"
-            self._record_event("cart_add_failed_no_stock", product_id=product["id"], product_name=product["name"])
+            self._record_event(
+                "cart_add_failed_no_stock",
+                product_id=product["id"],
+                product_name=product["name"],
+            )
             return
         pid = product["id"]
         if pid in self.cart:
             if self.cart[pid]["qty"] >= product["stock"]:
-                self.status_msg = f"✗  STOCK INSUFICIENTE — SOLO {product['stock']} UNIDADES"
+                self.status_msg = (
+                    f"✗  STOCK INSUFICIENTE — SOLO {product['stock']} UNIDADES"
+                )
                 self._record_event(
                     "cart_add_failed_stock_limit",
                     product_id=product["id"],
@@ -287,7 +295,10 @@ class StoreScreen(Screen[None]):
             self.status_msg = "⚠  EL CARRITO ESTÁ VACÍO"
             self._record_event("checkout_failed_empty_cart")
             return
-        self._record_event("checkout_started", item_count=sum(entry["qty"] for entry in self.cart.values()))
+        self._record_event(
+            "checkout_started",
+            item_count=sum(entry["qty"] for entry in self.cart.values()),
+        )
         app = cast(Any, self.app)
         app.push_screen(CheckoutModal(dict(self.cart), self._on_order_confirmed))
 
@@ -321,7 +332,10 @@ class StoreScreen(Screen[None]):
             if product is None:
                 return False, f"PRODUCTO {product_id} NO EXISTE"
             if product["stock"] < qty:
-                return False, f"STOCK INSUFICIENTE: {product['name']} ({product['stock']} DISPONIBLES)"
+                return (
+                    False,
+                    f"STOCK INSUFICIENTE: {product['name']} ({product['stock']} DISPONIBLES)",
+                )
 
         for product_id, qty in items.items():
             products_by_id[product_id]["stock"] -= qty
@@ -337,9 +351,14 @@ class StoreScreen(Screen[None]):
         username = str(getattr(app, "current_user", ""))
         user_id = getattr(app, "current_user_id", None)
         user_role = str(getattr(app, "current_user_role", "client") or "client")
-        entries = [{"product": entry["product"], "qty": entry["qty"]} for entry in self.cart.values()]
+        entries = [
+            {"product": entry["product"], "qty": entry["qty"]}
+            for entry in self.cart.values()
+        ]
         if self._trace_store is not None:
-            return self._trace_store.record_sale(username, entries, user_id=user_id, user_role=user_role)
+            return self._trace_store.record_sale(
+                username, entries, user_id=user_id, user_role=user_role
+            )
         return {"order_id": f"DTWG-{datetime.now().strftime('%H%M%S')}"}
 
     def _record_event(self, event_type: str, **details: Any) -> None:
@@ -384,5 +403,7 @@ class StoreScreen(Screen[None]):
             total += p["price"] * qty
             count += qty
 
-        self.query_one("#cart-count", Static).update(f"{count} ítem{'s' if count > 1 else ''}")
+        self.query_one("#cart-count", Static).update(
+            f"{count} ítem{'s' if count > 1 else ''}"
+        )
         self.query_one("#total-value", Static).update(f"${total:,.2f}")
