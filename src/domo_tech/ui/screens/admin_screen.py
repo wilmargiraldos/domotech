@@ -93,6 +93,32 @@ class AdminScreen(Screen[None]):
         self._last_products_cursor = -1
         self._status_message = ""
         self._status_offset = 0
+        self._status_mode = "tips"
+        self._status_hold_remaining = 0
+        self._section_tips: dict[str, list[str]] = {
+            "overview": [
+                "TIP: USA LA RUEDA DEL MOUSE PARA DESPLAZARTE VERTICALMENTE ENTRE LOS GRÁFICOS DE ESTA SECCIÓN",
+                "TIP: USA CTRL + RUEDA DEL MOUSE PARA DESPLAZARTE HORIZONTALMENTE SI ALGÚN GRÁFICO SE DESBORDA",
+            ],
+            "users": [
+                "TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO EDITAR USUARIO SE ACTUALIZA AUTOMÁTICAMENTE",
+                "TIP: USA LA RUEDA DEL MOUSE PARA DESPLAZAR VERTICALMENTE EL FORMULARIO EDITAR USUARIO",
+            ],
+            "products": [
+                "TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO EDITAR PRODUCTO SE ACTUALIZA AUTOMÁTICAMENTE",
+                "TIP: USA LA RUEDA DEL MOUSE PARA DESPLAZAR VERTICALMENTE EL FORMULARIO EDITAR PRODUCTO",
+                "TIP: USA CTRL + RUEDA DEL MOUSE PARA DESPLAZAR HORIZONTALMENTE LAS TABLAS",
+            ],
+            "sales": [
+                "TIP: USA LA RUEDA DEL MOUSE PARA DESPLAZARTE VERTICALMENTE LOS GRÁFICOS DE ESTA SECCIÓN",
+                "TIP: USA CTRL + RUEDA DEL MOUSE PARA DESPLAZARTE HORIZONTALMENTE SI ALGÚN GRÁFICO SE DESBORDA",
+            ],
+            "logs": [
+                "TIP: USA LA RUEDA DEL MOUSE PARA DESPLAZARTE VERTICALMENTE LOS REGISTROS DE ESTA SECCIÓN",
+                "TIP: USA CTRL + RUEDA DEL MOUSE PARA DESPLAZARTE HORIZONTALMENTE SI ALGUNA LÍNEA SE DESBORDA",
+            ],
+        }
+        self._section_tip_index: dict[str, int] = {section: 0 for section in self._section_tips}
 
     def compose(self) -> ComposeResult:
         with Container(id="admin-shell"):
@@ -139,7 +165,7 @@ class AdminScreen(Screen[None]):
         self.set_interval(1, self._tick)
         self.set_interval(0.15, self._scroll_status)
         self.set_interval(0.2, self._sync_selection_with_tables)
-        self._set_status("TIP: USA ↑↓ EN TABLAS PARA ACTUALIZAR FORMULARIOS")
+        self._activate_section_tips(self.section)
 
     def action_refresh_data(self) -> None:
         self.refresh_data()
@@ -203,20 +229,15 @@ class AdminScreen(Screen[None]):
     def _switch_section(self, section: str) -> None:
         self.section = section
         self._set_section_visibility(section)
+        self._activate_section_tips(section)
         if section == "users":
             self._selected_user_id = None
             self._last_users_cursor = -1
             self._load_selected_user_form()
-            self._set_status(
-                "TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE"
-            )
         elif section == "products":
             self._selected_product_id = None
             self._last_products_cursor = -1
             self._load_selected_product_form()
-            self._set_status(
-                "TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE"
-            )
         elif section == "overview":
             self._render_overview_section()
         elif section == "sales":
@@ -238,7 +259,60 @@ class AdminScreen(Screen[None]):
             clock.update(now)
 
     def _scroll_status(self) -> None:
+        status = self.query_one_optional("#admin-op-status", Static)
+        if status is None:
+            return
+
+        message = self._status_message
+        if not message:
+            status.update("")
+            return
+
+        width = int(getattr(status.size, "width", 0) or 0)
+        if width <= 0:
+            status.update(message)
+            return
+
+        if self._status_mode == "manual":
+            status.update(message)
+            if self._status_hold_remaining > 0:
+                self._status_hold_remaining -= 1
+                return
+            self._activate_section_tips(self.section)
+            return
+
+        if len(message) <= width:
+            status.update(message)
+            if self._status_hold_remaining > 0:
+                self._status_hold_remaining -= 1
+                return
+            self._activate_section_tips(self.section)
+            return
+
+        canvas = (" " * width) + message + (" " * width)
+        total_span = len(message) + width
+        if self._status_offset >= total_span:
+            self._activate_section_tips(self.section)
+            return
+
+        rendered = canvas[self._status_offset : self._status_offset + width]
+        if len(rendered) < width:
+            rendered += " " * (width - len(rendered))
+
+        status.update(rendered)
+        self._status_offset += 1
+
+    def _activate_section_tips(self, section: str) -> None:
+        tips = self._section_tips.get(section)
+        if not tips:
+            return
+        self._status_mode = "tips"
+        self._status_offset = 0
+        self._status_hold_remaining = 16
+        index = self._section_tip_index.get(section, 0)
+        self._status_message = tips[index]
         self._render_status_message()
+        self._section_tip_index[section] = (index + 1) % len(tips)
 
     def _sync_selection_with_tables(self) -> None:
         if self.section == "users":
@@ -844,8 +918,10 @@ class AdminScreen(Screen[None]):
         return "\n".join(lines)
 
     def _set_status(self, message: str) -> None:
+        self._status_mode = "manual"
         self._status_message = message.strip()
         self._status_offset = 0
+        self._status_hold_remaining = 32
         self._render_status_message()
 
     def _render_status_message(self) -> None:
