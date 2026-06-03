@@ -69,6 +69,7 @@ class LoginScreen(Screen):
                 yield Button("CREAR CUENTA", id="btn-register")
             yield Static("", id="login-error")
             name, version = _read_project_meta()
+            name = name.upper() if name else "DOMO-TECH"
             yield Static(
                 f"v{version} // {name} // ACCESO AUTORIZADO REQUERIDO",
                 id="login-footer-text",
