@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+# Standard library
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import NotRequired, TypedDict
 
+# Third-party
 import bcrypt
 
 
@@ -37,7 +39,10 @@ class UserStore:
 
     def load(self) -> list[UserRecord]:
         if not self.path.exists():
-            self._users = [self._base_user_record(index + 1, user) for index, user in enumerate(BASE_USERS)]
+            self._users = [
+                self._base_user_record(index + 1, user)
+                for index, user in enumerate(BASE_USERS)
+            ]
             self.save()
             return self.list_users()
 
@@ -103,11 +108,15 @@ class UserStore:
         user = self.get_by_username(username)
         if user is None or not user["active"]:
             return None
-        if bcrypt.checkpw(password.encode("utf-8"), user["password_hash"].encode("utf-8")):
+        if bcrypt.checkpw(
+            password.encode("utf-8"), user["password_hash"].encode("utf-8")
+        ):
             return dict(user)
         return None
 
-    def register_client(self, username: str, password: str) -> tuple[bool, str, UserRecord | None]:
+    def register_client(
+        self, username: str, password: str
+    ) -> tuple[bool, str, UserRecord | None]:
         clean_username = username.strip()
         if len(clean_username) < 3:
             return False, "EL USUARIO DEBE TENER AL MENOS 3 CARACTERES", None

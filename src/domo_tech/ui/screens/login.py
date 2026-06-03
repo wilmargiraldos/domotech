@@ -6,30 +6,29 @@ independently from the rest of the app screens.
 
 from __future__ import annotations
 
+# Standard library
 from collections.abc import Callable
 from typing import Any, Protocol, cast
 
+# Third-party
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
 from textual.screen import ModalScreen, Screen
 from textual.widgets import Button, Input, Label, Static
+
+# Local
 from domo_tech.ui.branding import BANNER_ONE_ROW, BANNER_TWO_ROWS
-
-
-DEFAULT_USERS = {
-    "admin": "1234",
-    "cyber": "punk",
-    "user": "pass",
-}
+from domo_tech.users import UserStore
+from domo_tech.utils import read_project_meta as _read_project_meta
 
 
 class UserProvider(Protocol):
-    def authenticate(self, username: str, password: str) -> dict | None:
-        ...
+    def authenticate(self, username: str, password: str) -> dict | None: ...
 
-    def register_client(self, username: str, password: str) -> tuple[bool, str, dict | None]:
-        ...
+    def register_client(
+        self, username: str, password: str
+    ) -> tuple[bool, str, dict | None]: ...
 
 
 LOGIN_BANNER_DEFAULT = BANNER_TWO_ROWS.strip("\n")
@@ -44,15 +43,13 @@ class LoginScreen(Screen):
     def __init__(
         self,
         on_login_success: Callable[[], None],
-        users: dict[str, str] | None = None,
         user_store: UserProvider | None = None,
         use_wide_banner: bool = True,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self._on_login_success = on_login_success
-        self._users = users or DEFAULT_USERS
-        self._user_store = user_store
+        self._user_store = user_store or UserStore()
         self._use_wide_banner = use_wide_banner
 
     def _banner_text(self) -> str:
@@ -71,7 +68,11 @@ class LoginScreen(Screen):
                 yield Button("⟫  INICIAR SESIÓN  ⟪", id="btn-login")
                 yield Button("CREAR CUENTA", id="btn-register")
             yield Static("", id="login-error")
-            yield Static("v0.0.1 // DOMO-TECH // ACCESO AUTORIZADO REQUERIDO", id="login-footer-text")
+            name, version = _read_project_meta()
+            yield Static(
+                f"v{version} // {name} // ACCESO AUTORIZADO REQUERIDO",
+                id="login-footer-text",
+            )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-login":
@@ -116,10 +117,9 @@ class LoginScreen(Screen):
             self._record_event("login_failed", username=user)
 
     def _authenticate(self, username: str, password: str) -> dict | None:
+        # Delegate authentication to the UserStore (single source of truth)
         if self._user_store is not None:
             return self._user_store.authenticate(username, password)
-        if self._users.get(username) == password:
-            return {"id": None, "username": username, "role": "client", "active": True}
         return None
 
     def _register_client(self, username: str, password: str) -> tuple[bool, str]:
@@ -134,7 +134,9 @@ class LoginScreen(Screen):
                 user_role=user["role"],
             )
         else:
-            self._record_event("user_registration_failed", username=username, message=message)
+            self._record_event(
+                "user_registration_failed", username=username, message=message
+            )
         return success, message
 
     def _record_event(self, event_type: str, **details: Any) -> None:
@@ -147,7 +149,9 @@ class LoginScreen(Screen):
 class RegisterModal(ModalScreen[None]):
     """Modal para enrolar un usuario cliente."""
 
-    def __init__(self, register_callback: Callable[[str, str], tuple[bool, str]], **kwargs):
+    def __init__(
+        self, register_callback: Callable[[str, str], tuple[bool, str]], **kwargs
+    ):
         super().__init__(**kwargs)
         self._register_callback = register_callback
 
@@ -157,9 +161,15 @@ class RegisterModal(ModalScreen[None]):
             yield Label("▸ USUARIO", classes="field-label")
             yield Input(placeholder="nuevo_usuario", id="register-user")
             yield Label("▸ CONTRASEÑA", classes="field-label")
-            yield Input(placeholder="mínimo 4 caracteres", password=True, id="register-pass")
+            yield Input(
+                placeholder="mínimo 4 caracteres", password=True, id="register-pass"
+            )
             yield Label("▸ CONFIRMAR CONTRASEÑA", classes="field-label")
-            yield Input(placeholder="repite la contraseña", password=True, id="register-pass-confirm")
+            yield Input(
+                placeholder="repite la contraseña",
+                password=True,
+                id="register-pass-confirm",
+            )
             yield Button("⟫  REGISTRAR  ⟪", id="btn-register-confirm")
             yield Button("CANCELAR", id="btn-register-cancel")
             yield Static("", id="register-error")

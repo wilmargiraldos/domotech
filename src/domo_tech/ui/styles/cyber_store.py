@@ -1,5 +1,6 @@
 """Cyber Punk for Online Store CSS styles."""
 
+# Sections
 CYBER_STORE_CSS = """
 /* ════════════ BASE ════════════ */
 Screen {

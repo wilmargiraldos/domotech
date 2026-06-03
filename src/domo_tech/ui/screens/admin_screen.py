@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+# Standard library
 import json
 from collections import Counter, defaultdict
 from datetime import datetime
 from typing import Any, Protocol, cast
 
+# Third-party
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, Horizontal, ScrollableContainer
@@ -16,8 +18,7 @@ from textual.widgets import Button, DataTable, Input, Static
 
 
 class AdminUserStore(Protocol):
-    def list_users(self) -> list[dict[str, Any]]:
-        ...
+    def list_users(self) -> list[dict[str, Any]]: ...
 
     def update_user(
         self,
@@ -27,16 +28,15 @@ class AdminUserStore(Protocol):
         password: str | None = None,
         role: str | None = None,
         active: bool | None = None,
-    ) -> tuple[bool, str, dict[str, Any] | None]:
-        ...
+    ) -> tuple[bool, str, dict[str, Any] | None]: ...
 
-    def promote_to_admin(self, user_id: int) -> tuple[bool, str, dict[str, Any] | None]:
-        ...
+    def promote_to_admin(
+        self, user_id: int
+    ) -> tuple[bool, str, dict[str, Any] | None]: ...
 
 
 class AdminInventoryStore(Protocol):
-    def list_products(self) -> list[dict[str, Any]]:
-        ...
+    def list_products(self) -> list[dict[str, Any]]: ...
 
     def update_product(
         self,
@@ -49,22 +49,17 @@ class AdminInventoryStore(Protocol):
         description: str | None = None,
         features: list[str] | None = None,
         specs: dict[str, str] | None = None,
-    ) -> tuple[bool, str, dict[str, Any] | None]:
-        ...
+    ) -> tuple[bool, str, dict[str, Any] | None]: ...
 
 
 class AdminTraceStore(Protocol):
-    def list_sales(self) -> list[dict[str, Any]]:
-        ...
+    def list_sales(self) -> list[dict[str, Any]]: ...
 
-    def list_events(self) -> list[dict[str, Any]]:
-        ...
+    def list_events(self) -> list[dict[str, Any]]: ...
 
-    def sales_summary(self) -> dict[str, Any]:
-        ...
+    def sales_summary(self) -> dict[str, Any]: ...
 
-    def record_event(self, event_type: str, **details: Any) -> dict[str, Any]:
-        ...
+    def record_event(self, event_type: str, **details: Any) -> dict[str, Any]: ...
 
 
 class AdminScreen(Screen[None]):
@@ -100,7 +95,9 @@ class AdminScreen(Screen[None]):
     def compose(self) -> ComposeResult:
         with Container(id="admin-shell"):
             with Horizontal(id="admin-header"):
-                yield Static("◈  PANEL ADMINISTRATIVO  ◈", id="admin-title", markup=False)
+                yield Static(
+                    "◈  PANEL ADMINISTRATIVO  ◈", id="admin-title", markup=False
+                )
                 yield Static("", id="admin-user", markup=False)
 
             with Horizontal(id="admin-nav"):
@@ -207,12 +204,16 @@ class AdminScreen(Screen[None]):
             self._selected_user_id = None
             self._last_users_cursor = -1
             self._load_selected_user_form()
-            self._set_status("TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE")
+            self._set_status(
+                "TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE"
+            )
         elif section == "products":
             self._selected_product_id = None
             self._last_products_cursor = -1
             self._load_selected_product_form()
-            self._set_status("TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE")
+            self._set_status(
+                "TIP: MUEVE EL CURSOR EN LA TABLA Y EL FORMULARIO SE ACTUALIZA AUTOMÁTICAMENTE"
+            )
         elif section == "overview":
             self._render_overview_section()
         elif section == "sales":
@@ -261,16 +262,26 @@ class AdminScreen(Screen[None]):
 
     def _update_kpis(self) -> None:
         total_users = len(self._users)
-        admin_count = sum(1 for user in self._users if str(user.get("role", "client")) == "admin")
-        low_stock = sum(1 for product in self._products if int(product.get("stock", 0)) <= 8)
+        admin_count = sum(
+            1 for user in self._users if str(user.get("role", "client")) == "admin"
+        )
+        low_stock = sum(
+            1 for product in self._products if int(product.get("stock", 0)) <= 8
+        )
         summary = self._trace_store.sales_summary()
 
-        self.query_one("#admin-kpi-users", Static).update(f"USUARIOS\n{total_users} total // {admin_count} admins")
-        self.query_one("#admin-kpi-products", Static).update(f"INVENTARIO\n{len(self._products)} productos // {low_stock} bajo stock")
+        self.query_one("#admin-kpi-users", Static).update(
+            f"USUARIOS\n{total_users} total // {admin_count} admins"
+        )
+        self.query_one("#admin-kpi-products", Static).update(
+            f"INVENTARIO\n{len(self._products)} productos // {low_stock} bajo stock"
+        )
         self.query_one("#admin-kpi-sales", Static).update(
             f"VENTAS\n{summary['sales_count']} órdenes // ${float(summary['total_revenue']):,.2f}"
         )
-        self.query_one("#admin-kpi-events", Static).update(f"LOGS\n{len(self._events)} eventos registrados")
+        self.query_one("#admin-kpi-events", Static).update(
+            f"LOGS\n{len(self._events)} eventos registrados"
+        )
 
     def _set_section_visibility(self, section: str) -> None:
         for section_id in (
@@ -290,7 +301,9 @@ class AdminScreen(Screen[None]):
             "sales": "#admin-sales-section",
             "logs": "#admin-logs-section",
         }
-        self.query_one(visible_map.get(section, "#admin-overview-section"), Widget).display = True
+        self.query_one(
+            visible_map.get(section, "#admin-overview-section"), Widget
+        ).display = True
         self._sync_nav_status(section)
 
     def _sync_nav_status(self, section: str) -> None:
@@ -301,7 +314,9 @@ class AdminScreen(Screen[None]):
             "sales": "VENTAS",
             "logs": "LOGS",
         }
-        self.query_one("#admin-status", Static).update(f"SECCIÓN ACTIVA // {labels.get(section, 'RESUMEN')}")
+        self.query_one("#admin-status", Static).update(
+            f"SECCIÓN ACTIVA // {labels.get(section, 'RESUMEN')}"
+        )
 
     def _compose_overview_section(self) -> ComposeResult:
         with ScrollableContainer(id="admin-overview-section"):
@@ -313,7 +328,9 @@ class AdminScreen(Screen[None]):
             yield Static("", id="admin-low-stock", markup=False)
 
     def _render_overview_section(self) -> None:
-        self.query_one("#admin-overview-text", Static).update(self._build_overview_text())
+        self.query_one("#admin-overview-text", Static).update(
+            self._build_overview_text()
+        )
         self.query_one("#admin-sales-chart", Static).update(
             self._build_bar_series("VENTAS POR DÍA", self._sales_by_day(), width=28)
         )
@@ -321,10 +338,14 @@ class AdminScreen(Screen[None]):
             self._build_bar_series("TOP PRODUCTOS", self._top_products(), width=28)
         )
         self.query_one("#admin-inventory-chart", Static).update(
-            self._build_bar_series("INVENTARIO POR CATEGORÍA", self._inventory_by_category(), width=28)
+            self._build_bar_series(
+                "INVENTARIO POR CATEGORÍA", self._inventory_by_category(), width=28
+            )
         )
         self.query_one("#admin-events-chart", Static).update(
-            self._build_bar_series("ACTIVIDAD DE LOGS", self._event_type_counts(), width=28)
+            self._build_bar_series(
+                "ACTIVIDAD DE LOGS", self._event_type_counts(), width=28
+            )
         )
         self.query_one("#admin-low-stock", Static).update(self._build_low_stock_lines())
 
@@ -333,7 +354,11 @@ class AdminScreen(Screen[None]):
             with Horizontal(id="admin-users-layout"):
                 with Container(id="admin-users-table-box"):
                     yield Static("USUARIOS REGISTRADOS", classes="admin-section-title")
-                    yield Static("Mueve el cursor con ↑↓ para cargar datos en el formulario.", id="admin-users-hint", markup=False)
+                    yield Static(
+                        "Mueve el cursor con ↑↓ para cargar datos en el formulario.",
+                        id="admin-users-hint",
+                        markup=False,
+                    )
                     yield DataTable(id="admin-users-table", cursor_type="row")
                     yield Button("CARGAR SELECCIÓN", id="admin-users-load")
                     yield Button("REFRESCAR", id="admin-users-refresh")
@@ -360,7 +385,11 @@ class AdminScreen(Screen[None]):
             with Horizontal(id="admin-products-layout"):
                 with Container(id="admin-products-table-box"):
                     yield Static("PRODUCTOS", classes="admin-section-title")
-                    yield Static("Mueve el cursor con ↑↓ para cargar datos en el formulario.", id="admin-products-hint", markup=False)
+                    yield Static(
+                        "Mueve el cursor con ↑↓ para cargar datos en el formulario.",
+                        id="admin-products-hint",
+                        markup=False,
+                    )
                     yield DataTable(id="admin-products-table", cursor_type="row")
                     yield Button("CARGAR SELECCIÓN", id="admin-products-load")
                     yield Button("REFRESCAR", id="admin-products-refresh")
@@ -377,7 +406,9 @@ class AdminScreen(Screen[None]):
                     yield Input(id="admin-product-stock")
                     yield Static("Descripción", classes="admin-field-label")
                     yield Input(id="admin-product-description")
-                    yield Static("Características (; separado)", classes="admin-field-label")
+                    yield Static(
+                        "Características (; separado)", classes="admin-field-label"
+                    )
                     yield Input(id="admin-product-features")
                     yield Static("Specs JSON", classes="admin-field-label")
                     yield Input(id="admin-product-specs")
@@ -394,12 +425,18 @@ class AdminScreen(Screen[None]):
             yield Static("", id="admin-revenue-chart", markup=False)
 
     def _render_sales_section(self) -> None:
-        self.query_one("#admin-sales-overview", Static).update(self._build_sales_overview_text())
+        self.query_one("#admin-sales-overview", Static).update(
+            self._build_sales_overview_text()
+        )
         self.query_one("#admin-order-status-chart", Static).update(
-            self._build_bar_series("ORDENES POR ESTADO", self._order_status_counts(), width=32)
+            self._build_bar_series(
+                "ORDENES POR ESTADO", self._order_status_counts(), width=32
+            )
         )
         self.query_one("#admin-revenue-chart", Static).update(
-            self._build_bar_series("INGRESOS DIARIOS", self._sales_by_day(value_mode="revenue"), width=32)
+            self._build_bar_series(
+                "INGRESOS DIARIOS", self._sales_by_day(value_mode="revenue"), width=32
+            )
         )
 
     def _compose_logs_section(self) -> ComposeResult:
@@ -450,15 +487,23 @@ class AdminScreen(Screen[None]):
             self.query_one("#admin-user-username", Input).value = ""
             self.query_one("#admin-user-role", Input).value = ""
             self.query_one("#admin-user-password", Input).value = ""
-            self.query_one("#admin-user-active-label", Static).update("Sin usuario seleccionado")
+            self.query_one("#admin-user-active-label", Static).update(
+                "Sin usuario seleccionado"
+            )
             return
 
         self._selected_user_id = int(user["id"])
-        self.query_one("#admin-user-username", Input).value = str(user.get("username", ""))
-        self.query_one("#admin-user-role", Input).value = str(user.get("role", "client"))
+        self.query_one("#admin-user-username", Input).value = str(
+            user.get("username", "")
+        )
+        self.query_one("#admin-user-role", Input).value = str(
+            user.get("role", "client")
+        )
         self.query_one("#admin-user-password", Input).value = ""
         active_text = "ACTIVO" if user.get("active", True) else "INACTIVO"
-        self.query_one("#admin-user-active-label", Static).update(f"Estado actual: {active_text}")
+        self.query_one("#admin-user-active-label", Static).update(
+            f"Estado actual: {active_text}"
+        )
 
     def _load_selected_product_form(self) -> None:
         product = self._selected_product()
@@ -477,13 +522,25 @@ class AdminScreen(Screen[None]):
             return
 
         self._selected_product_id = int(product["id"])
-        self.query_one("#admin-product-name", Input).value = str(product.get("name", ""))
+        self.query_one("#admin-product-name", Input).value = str(
+            product.get("name", "")
+        )
         self.query_one("#admin-product-cat", Input).value = str(product.get("cat", ""))
-        self.query_one("#admin-product-price", Input).value = str(product.get("price", 0.0))
-        self.query_one("#admin-product-stock", Input).value = str(product.get("stock", 0))
-        self.query_one("#admin-product-description", Input).value = str(product.get("description", ""))
-        self.query_one("#admin-product-features", Input).value = "; ".join(str(item) for item in product.get("features", []))
-        self.query_one("#admin-product-specs", Input).value = json.dumps(product.get("specs", {}), ensure_ascii=False)
+        self.query_one("#admin-product-price", Input).value = str(
+            product.get("price", 0.0)
+        )
+        self.query_one("#admin-product-stock", Input).value = str(
+            product.get("stock", 0)
+        )
+        self.query_one("#admin-product-description", Input).value = str(
+            product.get("description", "")
+        )
+        self.query_one("#admin-product-features", Input).value = "; ".join(
+            str(item) for item in product.get("features", [])
+        )
+        self.query_one("#admin-product-specs", Input).value = json.dumps(
+            product.get("specs", {}), ensure_ascii=False
+        )
 
     def _save_user_changes(self) -> None:
         user = self._selected_user()
@@ -530,7 +587,11 @@ class AdminScreen(Screen[None]):
             self._set_status(f"✗  {message}")
             return
 
-        self._trace_store.record_event("admin_user_promoted", user_id=int(user["id"]), username=str(user.get("username", "")))
+        self._trace_store.record_event(
+            "admin_user_promoted",
+            user_id=int(user["id"]),
+            username=str(user.get("username", "")),
+        )
         self._set_status(f"✓  {message}")
         self.refresh_data()
         self._select_user_by_id(int(user["id"]))
@@ -542,7 +603,9 @@ class AdminScreen(Screen[None]):
             return
 
         new_active = not bool(user.get("active", True))
-        success, message, _ = self._users_store.update_user(int(user["id"]), active=new_active)
+        success, message, _ = self._users_store.update_user(
+            int(user["id"]), active=new_active
+        )
         if not success:
             self._set_status(f"✗  {message}")
             return
@@ -572,7 +635,9 @@ class AdminScreen(Screen[None]):
         specs_text = self.query_one("#admin-product-specs", Input).value.strip()
 
         try:
-            price = float(price_text) if price_text else float(product.get("price", 0.0))
+            price = (
+                float(price_text) if price_text else float(product.get("price", 0.0))
+            )
             stock = int(stock_text) if stock_text else int(product.get("stock", 0))
         except ValueError:
             self._set_status("✗  PRECIO O STOCK INVÁLIDO")
@@ -610,7 +675,14 @@ class AdminScreen(Screen[None]):
 
     def _selected_user(self) -> dict[str, Any] | None:
         if self._selected_user_id is not None:
-            return next((user for user in self._users if int(user["id"]) == self._selected_user_id), None)
+            return next(
+                (
+                    user
+                    for user in self._users
+                    if int(user["id"]) == self._selected_user_id
+                ),
+                None,
+            )
         if not self._users:
             return None
         row = self._table_cursor_row("#admin-users-table")
@@ -620,7 +692,14 @@ class AdminScreen(Screen[None]):
 
     def _selected_product(self) -> dict[str, Any] | None:
         if self._selected_product_id is not None:
-            return next((product for product in self._products if int(product["id"]) == self._selected_product_id), None)
+            return next(
+                (
+                    product
+                    for product in self._products
+                    if int(product["id"]) == self._selected_product_id
+                ),
+                None,
+            )
         if not self._products:
             return None
         row = self._table_cursor_row("#admin-products-table")
@@ -657,9 +736,13 @@ class AdminScreen(Screen[None]):
         return {str(key): str(value) for key, value in payload.items()}
 
     def _build_overview_text(self) -> str:
-        admin_count = sum(1 for user in self._users if str(user.get("role", "client")) == "admin")
+        admin_count = sum(
+            1 for user in self._users if str(user.get("role", "client")) == "admin"
+        )
         client_count = len(self._users) - admin_count
-        low_stock = [product for product in self._products if int(product.get("stock", 0)) <= 8]
+        low_stock = [
+            product for product in self._products if int(product.get("stock", 0)) <= 8
+        ]
         return (
             "RESUMEN EJECUTIVO\n"
             f"Usuarios activos: {sum(1 for user in self._users if user.get('active', True))} | Admins: {admin_count} | Clientes: {client_count}\n"
@@ -676,7 +759,9 @@ class AdminScreen(Screen[None]):
         )
 
     def _build_low_stock_lines(self) -> str:
-        low_stock = [product for product in self._products if int(product.get("stock", 0)) <= 8]
+        low_stock = [
+            product for product in self._products if int(product.get("stock", 0)) <= 8
+        ]
         if not low_stock:
             return "SIN ALERTAS DE STOCK BAJO"
         lines = ["ALERTAS DE STOCK BAJO"]
@@ -708,11 +793,15 @@ class AdminScreen(Screen[None]):
     def _inventory_by_category(self) -> list[tuple[str, float]]:
         totals: dict[str, float] = defaultdict(float)
         for product in self._products:
-            totals[str(product.get("cat", "Sin categoría"))] += float(product.get("stock", 0))
+            totals[str(product.get("cat", "Sin categoría"))] += float(
+                product.get("stock", 0)
+            )
         return sorted(totals.items(), key=lambda pair: pair[1], reverse=True)
 
     def _event_type_counts(self) -> list[tuple[str, float]]:
-        counter = Counter(str(event.get("event_type", "unknown")) for event in self._events)
+        counter = Counter(
+            str(event.get("event_type", "unknown")) for event in self._events
+        )
         return sorted(counter.items(), key=lambda pair: pair[1], reverse=True)
 
     def _order_status_counts(self) -> list[tuple[str, float]]:
@@ -726,10 +815,14 @@ class AdminScreen(Screen[None]):
             timestamp = str(event.get("timestamp", ""))
             event_type = str(event.get("event_type", "unknown"))
             details = event.get("details", {})
-            lines.append(f"{timestamp}  |  {event_type}  |  {json.dumps(details, ensure_ascii=False)}")
+            lines.append(
+                f"{timestamp}  |  {event_type}  |  {json.dumps(details, ensure_ascii=False)}"
+            )
         return lines or ["SIN EVENTOS REGISTRADOS"]
 
-    def _build_bar_series(self, title: str, pairs: list[tuple[str, float]], width: int = 24) -> str:
+    def _build_bar_series(
+        self, title: str, pairs: list[tuple[str, float]], width: int = 24
+    ) -> str:
         if not pairs:
             return f"{title}\nSIN DATOS\n"
         max_value = max(value for _, value in pairs) or 1
@@ -737,7 +830,11 @@ class AdminScreen(Screen[None]):
         for label, value in pairs[:10]:
             bar_length = max(1, int((value / max_value) * width)) if value > 0 else 0
             bar = "█" * bar_length if bar_length > 0 else "-"
-            lines.append(f"{label[:24].ljust(24)} {bar} {value:.0f}" if float(value).is_integer() else f"{label[:24].ljust(24)} {bar} {value:.2f}")
+            lines.append(
+                f"{label[:24].ljust(24)} {bar} {value:.0f}"
+                if float(value).is_integer()
+                else f"{label[:24].ljust(24)} {bar} {value:.2f}"
+            )
         return "\n".join(lines)
 
     def _set_status(self, message: str) -> None:

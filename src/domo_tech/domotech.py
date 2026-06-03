@@ -4,14 +4,17 @@ Modo TUI
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
+# Third-party
 from textual.app import App
+
+# Local
 from domo_tech.inventory import InventoryStore
-from domo_tech.tracing import TraceStore
-from domo_tech.users import UserStore
 from domo_tech.ui.screens.admin_screen import AdminScreen
 from domo_tech.ui.screens.login import LoginScreen
 from domo_tech.ui.screens.store_screen import StoreScreen
 from domo_tech.ui.styles import CYBER_STORE_CSS
+from domo_tech.tracing import TraceStore
+from domo_tech.users import UserStore
 
 # ─── CSS ──────────────────────────────────────────────────────────
 
@@ -19,6 +22,7 @@ CSS = CYBER_STORE_CSS
 USE_WIDE_LOGIN_BANNER = False
 
 # ─── App ──────────────────────────────────────────────────────────
+
 
 class DomoTechStore(App[None]):
     CSS = CSS

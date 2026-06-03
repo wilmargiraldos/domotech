@@ -13,35 +13,33 @@ Estructura actual
 -----------------
 
 ```text
+data
+├── audit_log.jsonl
+├── inventory.json
+├── sales_history.json
+├── users.json
 src/domo_tech/
 ├── __init__.py
 ├── domotech.py
 ├── inventory.py
 ├── tracing.py
 ├── users.py
-└── ui/
+├── ui/
+│   ├── __init__.py
+│   ├── branding.py
+│   ├── screens/
+│   │   ├── __init__.py
+│   │   ├── admin_screen.py
+│   │   ├── cart_item.py
+│   │   ├── login.py
+│   │   ├── modals.py
+│   │   └── store_screen.py
+│   └── styles/
+│       ├── __init__.py
+│       └── cyber_store.py
+└── utils/
     ├── __init__.py
-    ├── branding.py
-    ├── screens/
-    │   ├── __init__.py
-    │   ├── admin_screen.py
-    │   ├── cart_item.py
-    │   ├── login.py
-    │   ├── modals.py
-    │   └── store_screen.py
-    └── styles/
-        ├── __init__.py
-        └── cyber_store.py
-
-unused/
-├── db/
-├── investigation/
-└── ui/
-    ├── animated_banner.py
-    ├── integration_guide.py
-    ├── logo_demo.py
-    └── screens/
-        └── store.py
+    └── project_meta.py
 ```
 
 Lo que quedó fuera del flujo oficial
@@ -84,8 +82,23 @@ Usuarios iniciales
 - `user / pass`
 
 Notas
------
 
+Utilidad `project_meta`
+-----------------------
+
+Se extrajo la lógica de detección de nombre y versión del proyecto a una utilidad reutilizable:
+
+- Módulo: `src/domo_tech/utils/project_meta.py`
+- Función exportada: `read_project_meta()` → devuelve `(name, version)`
+
+Esto permite que otras partes del código (por ejemplo `ui/screens/login.py`) obtengan metadatos del proyecto de forma consistente tanto si el paquete está instalado como si se ejecuta desde el árbol de fuentes.
+
+Ejemplo de uso:
+
+```python
+from domo_tech.utils import read_project_meta
+name, version = read_project_meta()
+```
 - El script `domotech` está registrado en `pyproject.toml` como entry point del proyecto.
 - La documentación y los ejemplos de base de datos relacional, reportes CLI y demos gráficos quedaron fuera porque no forman parte del flujo oficial de `domotech.py`.
 - La carpeta `unused/` sirve para conservar el historial de piezas retiradas mientras se decide su eliminación definitiva.

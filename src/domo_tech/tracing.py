@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+# Standard library
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -104,7 +105,9 @@ class TraceStore:
     def sales_summary(self) -> dict[str, Any]:
         sales = self.list_sales()
         total_revenue = round(sum(float(sale["total"]) for sale in sales), 2)
-        total_items = sum(sum(int(item["qty"]) for item in sale["items"]) for sale in sales)
+        total_items = sum(
+            sum(int(item["qty"]) for item in sale["items"]) for sale in sales
+        )
         return {
             "sales_count": len(sales),
             "total_revenue": total_revenue,

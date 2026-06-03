@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+# Standard library
 from datetime import datetime
 from typing import Any, Protocol, TypedDict, cast
 
+# Third-party
 from rich.text import Text
 from textual import on
 from textual.app import ComposeResult
@@ -15,7 +17,16 @@ from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import Button, DataTable, Input, Static
 
+# Local
+from domo_tech.ui.screens.cart_item import CartItem
 from domo_tech.ui.screens.login import LoginScreen
+from domo_tech.ui.screens.modals import (
+    CheckoutModal,
+    HelpModal,
+    ProductDetailModal,
+    SuccessModal,
+)
+
 
 class Product(TypedDict):
     id: int
@@ -53,12 +64,6 @@ class TraceProvider(Protocol):
 
     def record_event(self, event_type: str, **details: Any) -> dict[str, Any]:
         ...
-
-
-from domo_tech.ui.screens.cart_item import CartItem
-from domo_tech.ui.screens.modals import CheckoutModal, HelpModal, ProductDetailModal, SuccessModal
-
-
 class StoreScreen(Screen[None]):
     """Pantalla principal de la tienda."""
 

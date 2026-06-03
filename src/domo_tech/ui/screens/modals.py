@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+# Standard library
 from typing import Callable
 
+# Third-party
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, ScrollableContainer

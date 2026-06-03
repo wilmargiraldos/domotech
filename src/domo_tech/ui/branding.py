@@ -113,20 +113,20 @@ SPLASH_WELCOME = r"""
 █   ██████╔╝╚██████╔╝██║ ╚═╝ ██║╚██████╔╝   ██║   ███████╗╚██████╗██║  ██║ █
 █   ╚═════╝  ╚═════╝ ╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝ █
 █                                                                          █
-█   ╔═════════════════════════════════════════════════════════════════╗   █
+█   ╔═════════════════════════════════════════════════════════════════╗    █
 █   ║  🏠 Smart Home Components & IoT Solutions                       ║   █
-█   ║  Especialización: Arduino • Raspberry Pi • Sensors & Actuators  ║   █
-█   ╚═════════════════════════════════════════════════════════════════╝   █
+█   ║  Especialización: Arduino • Raspberry Pi • Sensors & Actuators  ║    █
+█   ╚═════════════════════════════════════════════════════════════════╝    █
 █                                                                          █
-█   ┌─ Bienvenido al futuro inteligente de tu hogar ────────────────┐   █
-█   │                                                                │   █
-█   │  ⚙️  Microcontroladores y SBCs                                │   █
-█   │  🌡️  Sensores Inteligentes (temperatura, humedad, movimiento) │   █
-█   │  🔌 Módulos de Conectividad (WiFi, Bluetooth, LoRa)         │   █
-█   │  ⚡ Sistemas de Automatización y Control                     │   █
-█   │  💾 Almacenamiento y Procesamiento de Datos                 │   █
-█   │                                                                │   █
-█   └────────────────────────────────────────────────────────────────┘   █
+█   ┌─ Bienvenido al futuro inteligente de tu hogar ────────────────┐      █
+█   │                                                               │      █
+█   │  ⚙️  Microcontroladores y SBCs                                │     █
+█   │  🌡️  Sensores Inteligentes (temperatura, humedad, movimiento) │     █
+█   │  🔌 Módulos de Conectividad (WiFi, Bluetooth, LoRa)           │     █
+█   │  ⚡ Sistemas de Automatización y Control                      │     █
+█   │  💾 Almacenamiento y Procesamiento de Datos                   │     █
+█   │                                                                │     █
+█   └────────────────────────────────────────────────────────────────┘     █
 █                                                                          █
 ████████████████████████████████████████████████████████████████████████████
 """
