@@ -667,6 +667,13 @@ CheckoutModal {
     margin-bottom: 1;
 }
 
+#checkout-items-scroll {
+    height: 12;
+    min-height: 0;
+    overflow-y: auto;
+    border-bottom: solid #111128;
+}
+
 .checkout-row {
     height: 2;
     align: left middle;

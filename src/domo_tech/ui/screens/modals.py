@@ -103,12 +103,13 @@ class CheckoutModal(ModalScreen):
         with Container(id="checkout-box"):
             yield Static("◈  RESUMEN DE ORDEN  ◈", id="checkout-title")
             yield Static("━" * 40, id="checkout-divider")
-            for entry in self._cart.values():
-                p = entry["product"]
-                with Horizontal(classes="checkout-row"):
-                    yield Static(p["name"], classes="co-name")
-                    yield Static(f"×{entry['qty']}", classes="co-qty")
-                    yield Static(f"${p['price'] * entry['qty']:,.2f}", classes="co-sub")
+            with ScrollableContainer(id="checkout-items-scroll", can_focus=False):
+                for entry in self._cart.values():
+                    p = entry["product"]
+                    with Horizontal(classes="checkout-row"):
+                        yield Static(p["name"], classes="co-name")
+                        yield Static(f"×{entry['qty']}", classes="co-qty")
+                        yield Static(f"${p['price'] * entry['qty']:,.2f}", classes="co-sub")
             with Horizontal(id="checkout-total-row"):
                 yield Static("TOTAL:", id="co-total-label")
                 yield Static(f"${total:,.2f}", id="co-total-val")
