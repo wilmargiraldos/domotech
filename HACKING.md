@@ -92,11 +92,8 @@ Este comando hará lo siguiente:
 El proyecto requiere las siguientes bibliotecas (instaladas automáticamente por Poetry):
 
 - **rich** (>=15.0.0): Para formateo avanzado de texto en la terminal
-- **pyfiglet** (>=1.0.4): Para crear arte ASCII/figlet
 - **textual** (>=8.2.5): Framework para interfaces de usuario en terminal
-- **sqlalchemy** (>=2.0.49): ORM para manejo de bases de datos
 - **bcrypt** (>=4.0.0): Para hash seguro de contraseñas
-- **alembic** (>=1.11.0): Para migraciones de base de datos
 
 ## Paso 5: Verificar la Instalación
 
@@ -206,19 +203,40 @@ exit
 - user  / pass
 
 ## Estructura del Proyecto
-
-```
+```text
 domo-tech/
-├── src/domo_tech/          # Código fuente principal
-│   ├── domotech.py         # Entry point principal
-│   ├── cyber_store.py      # Módulo de tienda
-│   ├── db/                 # Base de datos
-│   ├── ui/                 # Interfaz de usuario
+├── tests/                          # Pruebas unitarias
+├── data/                           # Datos de prueba y persistencia
+│   ├── audit_log.jsonl
+│   ├── inventory.json
+│   ├── sales_history.json
+│   ├── users.json
 │   └── ...
-├── tests/                  # Pruebas unitarias
-├── data/                   # Datos de prueba
-├── pyproject.toml          # Configuración del proyecto
-└── poetry.lock             # Versiones exactas de dependencias
+├──src/domo_tech/                   # Código fuente principal
+│   ├── __init__.py
+│   ├── domotech.py                 # Entry point principal
+│   ├── inventory.py                # Manejo del inventario
+│   ├── tracing.py                  # Logs y trazabilidad
+│   ├── users.py                    # Manejo de usuarios
+│   ├── ui/                         # Interfaz de usuario
+│   │   ├── __init__.py
+│   │   ├── branding.py             # Logos y marca
+│   │   ├── screens/
+│   │   │   ├── __init__.py
+│   │   │   ├── admin_screen.py     # Ventana administrativa
+│   │   │   ├── cart_item.py        # Elemento adquirido
+│   │   │   ├── login.py            # Ventana de inicio de sesion
+│   │   │   ├── modals.py           # Ventanas modales
+│   │   │   └── store_screen.py     # Ventana de la tienda
+│   │   └── styles/
+│   │       ├── __init__.py
+│   │       └── cyber_store.py      # Estilos visuales y de cascada
+│   └── utils/
+│       ├── __init__.py
+│       └── project_meta.py         # Utilidades y funciones accesorias
+├── pyproject.toml                  # Configuración del proyecto
+├── poetry.lock                     # Versiones exactas de dependencias
+└── ...
 ```
 
 ## Persistencia de Datos

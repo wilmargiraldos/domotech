@@ -38,7 +38,10 @@ LOGIN_BANNER_WIDE = BANNER_ONE_ROW.strip("\n")
 class LoginScreen(Screen):
     """Pantalla de login con estética cyberpunk."""
 
-    BINDINGS = [("enter", "submit", "Login")]
+    BINDINGS = [
+        ("enter", "submit", "Login"),
+        ("escape", "quit", "Salir"),
+    ]
 
     def __init__(
         self,
@@ -67,6 +70,7 @@ class LoginScreen(Screen):
             with Horizontal(id="login-actions"):
                 yield Button("⟫  INICIAR SESIÓN  ⟪", id="btn-login")
                 yield Button("CREAR CUENTA", id="btn-register")
+                yield Button("SALIR", id="btn-exit")
             yield Static("", id="login-error")
             name, version = _read_project_meta()
             name = name.upper() if name else "DOMO-TECH"
@@ -80,9 +84,14 @@ class LoginScreen(Screen):
             self._try_login()
         elif event.button.id == "btn-register":
             self.app.push_screen(RegisterModal(self._register_client))
+        elif event.button.id == "btn-exit":
+            self.app.exit()
 
     def action_submit(self) -> None:
         self._try_login()
+    
+    def action_quit(self) -> None:
+        self.app.exit()
 
     def clear_form(self) -> None:
         self.query_one("#input-user", Input).value = ""

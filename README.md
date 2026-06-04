@@ -17,7 +17,7 @@ data
 ├── audit_log.jsonl
 ├── inventory.json
 ├── sales_history.json
-├── users.json
+└── users.json
 src/domo_tech/
 ├── __init__.py
 ├── domotech.py

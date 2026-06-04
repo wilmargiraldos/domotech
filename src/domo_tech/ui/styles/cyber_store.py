@@ -83,6 +83,19 @@ Input:focus {
     color: #ffffff;
 }
 
+#btn-exit {
+    margin-top: 0;
+    background: #333344;
+    color: #888899;
+    border: tall #444455;
+    width: 12;
+}
+
+#btn-exit:hover {
+    background: #444455;
+    color: #ffffff;
+}
+
 #login-error {
     color: #ff3333;
     text-align: center;
@@ -104,6 +117,10 @@ Input:focus {
 }
 
 #btn-register {
+    margin-left: 1;
+}
+
+#btn-exit {
     margin-left: 1;
 }
 
